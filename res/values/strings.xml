@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="logEventButtonString">Mark Action</string>
+    <string name="log_event_filename">activehabits.txt</string>
+    <string name="app_name">ActiveHabits</string>
+    <string name="mark">Mark</string>
+    <string name="chart">Chart</string>
+    <string name="social">Social</string>
+    <string name="settings">Settings-</string> <!-- TODO: settings string -->
+    <string name="about">About-</string> <!-- TODO: about string -->
+    <string name="close">Close</string>
+    <string name="copyrecent">Copy Recent</string>
+    <string name="rename">Rename</string>
+    <string name="unmark">Unmark</string>
+    <string name="history">History</string>
+    <string name="remove">Remove</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="actionname">Action name:</string>
+</resources>
