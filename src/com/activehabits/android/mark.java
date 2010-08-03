@@ -41,7 +41,7 @@ public class mark extends Activity implements OnClickListener {
     public void onResume() {
         super.onResume();
         // later use setPreferences(int)?
-        
+
     	boolean mExternalStorageAvailable = false;
     	boolean mExternalStorageWriteable = false;
     	String state = Environment.getExternalStorageState();
@@ -57,7 +57,7 @@ public class mark extends Activity implements OnClickListener {
     	    //  to know is we can neither read nor write
     	    mExternalStorageAvailable = mExternalStorageWriteable = false;
     	}
-    	
+
     	// begin work
 
     	if (mExternalStorageAvailable) {
@@ -96,7 +96,7 @@ public class mark extends Activity implements OnClickListener {
     	}
         super.onPause();
     }
-    
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -138,7 +138,7 @@ public class mark extends Activity implements OnClickListener {
             return super.onOptionsItemSelected(item);
         }
     }
-    
+
     public void onClick(View v) {
 		Calendar rightnow = Calendar.getInstance();
 		Date x = rightnow.getTime();
@@ -146,17 +146,16 @@ public class mark extends Activity implements OnClickListener {
 
         LocationManager locator = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
         Location loc = locator.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-//        if (loc == null) {
-//          // Fall back to coarse location.
-//          loc = locator.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-//        }
+        if (loc == null) {
+          // Fall back to coarse location.
+          loc = locator.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+        }
         String locString;
         if (loc == null)
         	locString = "";
         else
         	locString = loc.toString();
 
-// TODO: record location in log
 //        Criteria c = new Criteria();
 //        c.setAccuracy(Criteria.NO_REQUIREMENT);
 //        Location loc = locator.getLastKnownLocation(locationManager.getBestProvider(c, true));
@@ -206,7 +205,7 @@ public class mark extends Activity implements OnClickListener {
 //
 //    private void removeEvent(long id) {
 //        // from Context Item
-//        
+//
 //    }
 
 //    @Override
@@ -215,7 +214,7 @@ public class mark extends Activity implements OnClickListener {
 //        case R.id.rename:
 //            rn.SetText("eventname"); // TODO: FRUSTRATION
 /* ALL I FUCKING WANT IS A SIMPLE DIALOG BOX LINEAR LAYOUT I
- * GUESS WITH A TITLE, AN EDITTEXT FIELD POPULATED WITH THE 
+ * GUESS WITH A TITLE, AN EDITTEXT FIELD POPULATED WITH THE
  * EVENT NAME AND OK / CANCEL
  * WHY IS THIS SO FUCKING HARD
  * I MUST BE WAY TOO TIRED FOR THIS */
