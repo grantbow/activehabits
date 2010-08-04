@@ -16,8 +16,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".chart" />
+        <activity android:name=".chart" android:label="@string/chart"/>
         <activity android:name="org.achartengine.GraphicalActivity" android:label="Chart Actions"/>
+        <activity android:name=".prefs" android:label="@string/prefs" />
 
     </application>
 

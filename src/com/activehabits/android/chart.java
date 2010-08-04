@@ -30,10 +30,8 @@ import org.achartengine.renderer.XYMultipleSeriesRenderer;
 import org.achartengine.renderer.XYSeriesRenderer;
 
 public class chart extends Activity {
-
 	private static final String TAG = "ActiveHabits.chart";
-	
-	private static final Integer MAXEVENTS = 100; // TODO: fix max # events String[] of 50
+	private static final Integer MAXEVENTS = 50; // TODO: fix max # events String[] of 50
 
 	/* Called when the activity is first created. */
     @Override
@@ -43,81 +41,21 @@ public class chart extends Activity {
 
         // not sure how to change some values from .../src/achart/doc/org/achartengine/chart/TimeChart.html
         // we created an Intent so the actual class is instantiated inside the other Activity
-    	Intent draw = ChartFactory.getTimeChartIntent(getApplicationContext(), getDataset(), getRenderer(), "string");
+    	Intent draw = ChartFactory.getTimeChartIntent(
+    	                  getApplicationContext(),
+    	                  getDataset(),
+    	                  getRenderer(),
+    	                  "EEE, MMM d");
     	try { startActivity(draw); }
     	catch (ActivityNotFoundException e) { e.printStackTrace(); }
         catch (NullPointerException e) { e.printStackTrace(); }
     	Log.i(TAG, "chart drawn");
 
         // TODO: org.achartengine menu
-    	
+
     	finish(); // finishes chart activity, leaves the new org.achartengine* activity
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        menu.removeItem(R.id.chart); // we are in chart so disable chart menu item
-        inflater.inflate(R.menu.habit_menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        super.onPrepareOptionsMenu(menu);
-        menu.removeItem(R.id.chart);
-        return true;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        //use setPreferences(int)?
-//        showDialog(R.id.dialog_choose_chart);
-    }
-
-    @Override
-    protected Dialog onCreateDialog(int id) { // TODO: chart OnPrepareDialog
-        switch(id) {
-        case R.id.dialog_choose_chart:
-            // Respond to anything from this dialog by drawing right now.
-        	CharSequence[] items = new CharSequence[] {"all"}; // now predifined
-                // will populate with habit names
-        	return new AlertDialog.Builder(chart.this)
-        	    .setTitle( R.string.chart )
-        	    .setNegativeButton(R.string.close, new DialogInterface.OnClickListener() {
-    	            public void onClick(DialogInterface dialog, int whichButton) {
-    	        	    finish();
-    	            }
-    	        }
-        	    ).setItems(items, new DialogInterface.OnClickListener() {
-    	                public void onClick(DialogInterface dialog, int whichButton) {
-    	                	Intent draw = ChartFactory.getTimeChartIntent(getApplicationContext(), getDataset(), getRenderer(), null);
-    	                	try {
-    	                		startActivity(draw);
-    	                	}
-    	                	catch (ActivityNotFoundException e) {
-    	                		e.printStackTrace();
-    	                	}
-    	                	Log.i(TAG, "drawn chart");
-    	                		
-
-//                            finish();
-//    	                	if whichButton == 1
-//    	        	            x;
-//    	        	        else
-//    	        	        	;
-                        }
-        	        }
-        	    ).create();
-//        	.setOnCancelListener(arg0)
-//        	.setOnKeyListener(arg0)
-//          .setCancelable(false)
-            default:
-            return null;
-        }
-    }
-    
     private XYMultipleSeriesDataset getDataset() {
         Integer l = 0; // lines of data, zero based
         String[] eventName = new String[MAXEVENTS];
@@ -135,7 +73,7 @@ public class chart extends Activity {
             String[] temp = new String[10];
             String x = buf.readLine();
             while ( x.length() > 0 ) {
-                //Log.i(TAG, "buf.readline() " + x); // USEFUL
+                Log.i(TAG, "buf.readline() " + x); // USEFUL
                 if ( ! x.startsWith("#") ) { // if not a comment
                     Log.i(TAG, "chart read: " + x);
                     temp = x.split("\t", 4); // Max 4 strings split on tabs, perfect
@@ -166,9 +104,9 @@ public class chart extends Activity {
         // X values are seconds (not milliseconds) from (int) eventSec[0] to eventSec[l]
         // Y values are hours from eventHour[0] to eventHour[l]
         // X range varies with start and end times - ideally add buffer on both sides
-        // Y range is 0 - 24 hours in the day from TOP to BOTTOM like a Calendar.
+        // Y range is 0 - 24 hours in the day TODO: chart from TOP to BOTTOM like a Calendar.
         // right now each eventName is the same - this will change
-        
+
         XYMultipleSeriesDataset dataset = new XYMultipleSeriesDataset();
         final int nr = l;
         // long minXvalue = eventSec[0] * 1000; // Seconds to Milliseconds
@@ -187,11 +125,13 @@ public class chart extends Activity {
 
     private XYMultipleSeriesRenderer getRenderer() {
         XYMultipleSeriesRenderer renderer = new XYMultipleSeriesRenderer();
+        // prepare XYSeriesRenderer
         XYSeriesRenderer r = new XYSeriesRenderer();
         r.setColor(Color.GREEN);
         r.setPointStyle(PointStyle.TRIANGLE);
-        r.setLineWidth((float) 0.0);
+        r.setLineWidth((float) 0.0); // tried to get rid of the lines
         r.setFillPoints(true);
+        // prepare renderer
         renderer.addSeriesRenderer(r);
         renderer.setLabelsColor(Color.LTGRAY);
         renderer.setLabelsTextSize(10);
@@ -201,29 +141,46 @@ public class chart extends Activity {
         renderer.setYAxisMin(0.0);
         renderer.setYAxisMax(24.0);
         renderer.setLegendTextSize(14);
-        renderer.setDisplayChartValues(true);
+        renderer.setDisplayChartValues(true); // text on plotted values
         renderer.setShowGrid(true);
-        Log.i(TAG, "label text name " + renderer.getTextTypefaceName());
-        Log.i(TAG, "label text style " + renderer.getTextTypefaceStyle());
+        //Log.i(TAG, "label text name " + renderer.getTextTypefaceName());
+        //Log.i(TAG, "label text style " + renderer.getTextTypefaceStyle());
         renderer.setChartValuesTextSize(18);
         //Log.i(TAG, "renderer " + renderer.toString());
         return renderer;
-      } 
-   
+      }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        menu.removeItem(R.id.chart); // we are in chart so disable chart menu item
+        inflater.inflate(R.menu.habit_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        menu.removeItem(R.id.chart);
+        return true;
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
         switch (item.getItemId()) {
         case R.id.mark:
-        	Intent myIntent = new Intent(this, mark.class);
-        	startActivity(myIntent);
+        	Intent myChartIntent = new Intent(this, mark.class);
+        	startActivity(myChartIntent);
             return true;
 //      case R.id.chart: // item removed
 //          return true;
 //      case R.id.social:
 //          return true;
-        case R.id.settings:
-            return true; // TODO: settings from chart
+        case R.id.prefs:
+            Intent myPrefIntent = new Intent(this,prefs.class);
+            startActivity(myPrefIntent);
+            return true;
         case R.id.about:
             return true; // TODO: about from chart
         case R.id.quit: {
@@ -232,6 +189,59 @@ public class chart extends Activity {
         }
         default:
             return super.onOptionsItemSelected(item);
+        }
+    }
+
+//  @Override
+//  public void onResume() {
+//      super.onResume();
+//      //use setPreferences(int)?
+//      //showDialog(R.id.dialog_choose_chart);
+//  }
+
+    @Override
+    protected Dialog onCreateDialog(int id) { // TODO: chart OnPrepareDialog
+        switch(id) {
+        case R.id.dialog_choose_chart:
+            // Respond to anything from this dialog by drawing right now.
+            CharSequence[] items = new CharSequence[] {"all"}; // now predifined
+                // will populate with habit names
+            return new AlertDialog.Builder(chart.this)
+                .setTitle( R.string.chart )
+                .setNegativeButton(R.string.close, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        finish();
+                    }
+                }
+                ).setItems(items, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            Intent draw = ChartFactory.getTimeChartIntent(
+                                             getApplicationContext(),
+                                             getDataset(),
+                                             getRenderer(),
+                                             null);
+                            try {
+                                startActivity(draw);
+                            }
+                            catch (ActivityNotFoundException e) {
+                                e.printStackTrace();
+                            }
+                            Log.i(TAG, "drawn chart");
+
+
+//                            finish();
+//                          if whichButton == 1
+//                              x;
+//                          else
+//                              ;
+                        }
+                    }
+                ).create();
+//          .setOnCancelListener(arg0)
+//          .setOnKeyListener(arg0)
+//          .setCancelable(false)
+            default:
+            return null;
         }
     }
 

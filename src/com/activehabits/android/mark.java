@@ -3,11 +3,13 @@ package com.activehabits.android;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -18,6 +20,7 @@ import android.widget.Button;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Map;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -30,19 +33,35 @@ public class mark extends Activity implements OnClickListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // set up layout and button
+        // set up layout
         setContentView(R.layout.main);
-        Button logEventButton = (Button) findViewById(R.id.log_event_button);
-        logEventButton.setOnClickListener((OnClickListener) this);
-//        registerForContextMenu(logEventButton);
+
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        // later use setPreferences(int)?
+        // load default preferences
+        SharedPreferences myPrefs = PreferenceManager
+            .getDefaultSharedPreferences(this);
+        Map<String, ?> foo = myPrefs.getAll();
+        Log.i(TAG, "myPrefs: " + foo.toString());
+//        Preference x = ("action0");
 
-    	boolean mExternalStorageAvailable = false;
+        // set up button
+        Button logEventButton = (Button) findViewById(R.id.log_event_button);
+        logEventButton.setText(myPrefs.getString("action0", "Mark Action"));
+        logEventButton.setOnClickListener((OnClickListener) this);
+
+        // TODO: initial value set, make sure it gets updated
+        //myPrefs.registerOnSharedPreferenceChangeListener();
+
+//        Log.i(TAG, "action0: " + myPrefs.getString("action0", "Mark Action"));
+//        registerForContextMenu(logEventButton);
+
+        // setPreferences(int)?
+
+        boolean mExternalStorageAvailable = false;
     	boolean mExternalStorageWriteable = false;
     	String state = Environment.getExternalStorageState();
     	if (Environment.MEDIA_MOUNTED.equals(state)) {
@@ -120,14 +139,16 @@ public class mark extends Activity implements OnClickListener {
 //      case R.id.mark: // item removed
 //          return true;
         case R.id.chart:
-        	Intent myIntent = new Intent(this,chart.class);
-        	startActivity(myIntent);
+        	Intent myChartIntent = new Intent(this,chart.class);
+        	startActivity(myChartIntent);
         	finish();
             return true;
 //      case R.id.social:
 //          return true;
-//        case R.id.settings:
-//            return true; // TODO: settings from mark
+        case R.id.prefs:
+            Intent myPrefIntent = new Intent(this,prefs.class);
+            startActivity(myPrefIntent);
+            return true;
         case R.id.about:
             return true; // TODO: about from mark
         case R.id.quit: {
@@ -142,13 +163,24 @@ public class mark extends Activity implements OnClickListener {
     public void onClick(View v) {
 		Calendar rightnow = Calendar.getInstance();
 		Date x = rightnow.getTime();
-        Integer b = x.getMinutes() * 100 / 60;
+	        // x.getTime() should be identical rightnow.getTimeInMillis()
+		Integer b = x.getMinutes() * 100 / 60;
 
         LocationManager locator = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
-        Location loc = locator.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        if (loc == null) {
-          // Fall back to coarse location.
-          loc = locator.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+        Location loc = null;
+        try {
+            loc = locator.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            if (loc == null) {
+                // Fall back to coarse location.
+                loc = locator.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+//              Criteria c = new Criteria();
+//              c.setAccuracy(Criteria.NO_REQUIREMENT);
+//              Location loc = locator.getLastKnownLocation(locationManager.getBestProvider(c, true));
+                             // criteria, enabledOnly - getLastKnownLocation error check?
+            }
+        }
+        catch (IllegalArgumentException e) {
+            e.printStackTrace();
         }
         String locString;
         if (loc == null)
@@ -156,17 +188,32 @@ public class mark extends Activity implements OnClickListener {
         else
         	locString = loc.toString();
 
-//        Criteria c = new Criteria();
-//        c.setAccuracy(Criteria.NO_REQUIREMENT);
-//        Location loc = locator.getLastKnownLocation(locationManager.getBestProvider(c, true));
-                       // criteria, enabledOnly - getLastKnownLocation error check?
+        CharSequence buttonText = ((Button) v).getText();
+
         try {
-        	if (b < 10) { // x.getTime() should be identical foo.getTimeInMillis()
-        		Log.i(TAG, "mark write: event1\t" + (rightnow.getTimeInMillis() / 1000) + "\t" + x.getHours() + ".0" + b + "\t" + x.toLocaleString() + "\t" + locString);
-        		writer.append("event1\t" + (rightnow.getTimeInMillis() / 1000) + "\t" + x.getHours() + ".0" + b + "\t" + x.toLocaleString() + "\t" + locString + "\n");
+        	if (b < 10) {
+        		Log.i(TAG, "mark write: "
+        		        + buttonText + "\t"
+        		        + (rightnow.getTimeInMillis() / 1000) + "\t"
+        		        + x.getHours() + ".0" + b + "\t"
+        		        + x.toLocaleString() + "\t" + locString);
+        		writer.append( buttonText + "\t" +
+        		        (rightnow.getTimeInMillis() / 1000) + "\t"
+        		        + x.getHours() + ".0" + b + "\t"
+        		        + x.toLocaleString() + "\t"
+        		        + locString + "\n");
         	} else {
-        		Log.i(TAG, "mark write: event1\t" + (rightnow.getTimeInMillis() / 1000) + "\t" + x.getHours() + "." + b + "\t" + x.toLocaleString() + "\t" + locString);
-        		writer.append("event1\t" + (rightnow.getTimeInMillis() / 1000) + "\t" + x.getHours() + "." + b + "\t" + x.toLocaleString() + "\t" + locString + "\n");
+        		Log.i(TAG, "mark write: "
+        		        + buttonText + "\t"
+        		        + (rightnow.getTimeInMillis() / 1000) + "\t"
+        		        + x.getHours() + "." + b + "\t"
+        		        + x.toLocaleString() + "\t"
+        		        + locString);
+        		writer.append( buttonText + "\t"
+        		        + (rightnow.getTimeInMillis() / 1000) + "\t"
+        		        + x.getHours() + "." + b + "\t"
+        		        + x.toLocaleString() + "\t"
+        		        + locString + "\n");
         	}
         }
         catch (IOException e) {
@@ -209,15 +256,10 @@ public class mark extends Activity implements OnClickListener {
 //    }
 
 //    @Override
-//    protected Dialog onCreateDialog(int id) { // TODO: OnPrepareDialog
+//    protected Dialog onCreateDialog(int id) {
 //        switch(id) {
 //        case R.id.rename:
-//            rn.SetText("eventname"); // TODO: FRUSTRATION
-/* ALL I FUCKING WANT IS A SIMPLE DIALOG BOX LINEAR LAYOUT I
- * GUESS WITH A TITLE, AN EDITTEXT FIELD POPULATED WITH THE
- * EVENT NAME AND OK / CANCEL
- * WHY IS THIS SO FUCKING HARD
- * I MUST BE WAY TOO TIRED FOR THIS */
+//            rn.SetText("eventname");
 //            default:
 //                return null;
 //        }
