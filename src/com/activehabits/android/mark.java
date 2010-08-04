@@ -20,7 +20,6 @@ import android.widget.Button;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Map;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -44,11 +43,11 @@ public class mark extends Activity implements OnClickListener {
         // load default preferences
         SharedPreferences myPrefs = PreferenceManager
             .getDefaultSharedPreferences(this);
-        Map<String, ?> foo = myPrefs.getAll();
-        Log.i(TAG, "myPrefs: " + foo.toString());
-//        Preference x = ("action0");
+        //Map<String, ?> foo = myPrefs.getAll();
+        //Log.i(TAG, "myPrefs: " + foo.toString());
+        //Preference x = ("action0");
 
-        // set up button
+        // set up button(s)
         Button logEventButton = (Button) findViewById(R.id.log_event_button);
         logEventButton.setText(myPrefs.getString("action0", "Mark Action"));
         logEventButton.setOnClickListener((OnClickListener) this);

@@ -57,12 +57,14 @@ public class chart extends Activity {
     }
 
     private XYMultipleSeriesDataset getDataset() {
+        XYMultipleSeriesDataset dataset = new XYMultipleSeriesDataset();
         Integer l = 0; // lines of data, zero based
         String[] eventName = new String[MAXEVENTS];
         String[] eventSec = new String[MAXEVENTS];
         String[] eventHour = new String[MAXEVENTS];
         String[] eventMore = new String[MAXEVENTS];
         // assume data on SDcard exists and is good
+        // assume no blank lines within data, x.length() > 0
         // read data from SDcard
         try {
             final File root = Environment.getExternalStorageDirectory();
@@ -97,7 +99,7 @@ public class chart extends Activity {
         } catch (IOException e) { // for problems with reading buf
             e.printStackTrace();
         }
-        l -= 1; // that wasn't data
+//        l -= 1; // that wasn't data
 
         // Got Data!
         // currently assumes data is in chronological order
@@ -107,7 +109,6 @@ public class chart extends Activity {
         // Y range is 0 - 24 hours in the day TODO: chart from TOP to BOTTOM like a Calendar.
         // right now each eventName is the same - this will change
 
-        XYMultipleSeriesDataset dataset = new XYMultipleSeriesDataset();
         final int nr = l;
         // long minXvalue = eventSec[0] * 1000; // Seconds to Milliseconds
         // Random r = new Random();
@@ -138,6 +139,8 @@ public class chart extends Activity {
         renderer.setAxesColor(Color.DKGRAY);
         renderer.setXLabels(3); // TODO: setXLabels sucks, need to addTextLabels at specific points manually
         renderer.setYLabels(3);
+        renderer.setXAxisMin(renderer.getXAxisMin() - 86400000);
+        renderer.setXAxisMax(renderer.getXAxisMax() + 86400000);
         renderer.setYAxisMin(0.0);
         renderer.setYAxisMax(24.0);
         renderer.setLegendTextSize(14);

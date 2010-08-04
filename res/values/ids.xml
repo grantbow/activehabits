@@ -5,4 +5,6 @@
 <!--<item type="id" name="button_ok" /> -->
     <item type="id" name="dialog_rename" />
     <item type="id" name="prefs" />
+    <item type="id" name="addaction" />
+    <item type="id" name="removeaction" />
 </resources>
