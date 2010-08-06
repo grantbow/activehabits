@@ -34,22 +34,22 @@ public class mark extends Activity implements OnClickListener {
         super.onCreate(savedInstanceState);
         // set up layout
         setContentView(R.layout.main);
-
     }
 
     @Override
     public void onResume() {
         super.onResume();
         // load default preferences
-        SharedPreferences myPrefs = PreferenceManager
+        SharedPreferences myMgrPrefs = PreferenceManager
             .getDefaultSharedPreferences(this);
+        //SharedPreferences myMgrPrefs = getPreferences(R.id.prefs);
         //Map<String, ?> foo = myPrefs.getAll();
         //Log.i(TAG, "myPrefs: " + foo.toString());
         //Preference x = ("action0");
 
         // set up button(s)
         Button logEventButton = (Button) findViewById(R.id.log_event_button);
-        logEventButton.setText(myPrefs.getString("action0", "Mark Action"));
+        logEventButton.setText(myMgrPrefs.getString("action0", "Mark Action"));
         logEventButton.setOnClickListener((OnClickListener) this);
 
         // TODO: initial value set, make sure it gets updated

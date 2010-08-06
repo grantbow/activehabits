@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
+import android.preference.PreferenceScreen;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.util.Log;
 import android.view.Menu;
@@ -21,76 +22,128 @@ public class prefs extends PreferenceActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // load XML prefs to activity
-        addPreferencesFromResource(R.xml.preferences);  //R.id.prefs
-        Preference x = findPreference("action0"); // activity object
-        x.setOnPreferenceChangeListener(mChangeAction); // turn on listener
-
-        // set title of first pref to the value
+        // load shared prefs
         SharedPreferences myMgrPrefs = PreferenceManager
             .getDefaultSharedPreferences(this);
-        x.setTitle(myMgrPrefs.getString("action0", "Mark Action"));
-        Log.i(TAG, "action0 Mgr: " + myMgrPrefs.getString("action0", "Mark Action"));
+        Log.i(TAG, "myMgrPrefs: " + myMgrPrefs.getAll().toString());
+
+        //myMgrPrefs.registerOnSharedPreferenceChangeListener(mChangeAction);
         // Why use myMgrPrefs and not myGetPrefs?  application vs. real prefs?
+
+        // load XML prefs to activity
+        addPreferencesFromResource(R.xml.preferences);  //R.id.prefs
+        // init action0 title & listener
+        Preference x = findPreference("action0"); // activity object
+        x.setOnPreferenceChangeListener(mChangeAction); // turn on listener
+        x.setTitle(myMgrPrefs.getString("action0", "Mark Action"));
+        //Log.i(TAG, "context: " + x.getContext());
+        Log.i(TAG, "action0 Mgr: " + myMgrPrefs.getString("action0", "Mark Action"));
 
         // add more prefs if they exist
         Map<String, ?> bar = myMgrPrefs.getAll();
         Log.i(TAG, "myMgrPrefs: " + bar.toString());
         int len = bar.size();
-        //Log.i(TAG, "go: action" + 1);
+//        Log.i(TAG, "len: " + len);
+//        ArrayList al;
         String newAction;
         for (int i = 1; i < len ; ++i) { // i=1, don't run for action0
             newAction = "action" + i;
             Log.i(TAG, "testing: '" + newAction + "'");
             if ( bar.containsKey(newAction) ) {
                 // add new pref to activity
-                Log.i(TAG, "need to add: " + newAction);
-//                addPreferencesFromIntent(newAction); // this is the key
+                Log.i(TAG, "need to add: " + newAction + ", " + (String) bar.get(newAction));
+//                addPreferencesFromIntent(newAction); // this queries other activities.
+                //addPreferencesFromResource("action0");  //R.xml.preferences
+//                Editor newEditor = myMgrPrefs.edit();
+//                newEditor.putString(newAction, (String) bar.get(newAction));
+//                newEditor.commit();
+//                Log.i(TAG, "added with Editor"); // don't need to
+
                 // after it's added, get the Preference object as x
-//                x.setOnPreferenceChangeListener(mChangeAction); // turn on listener
-//                x.setTitle(myMgrPrefs.getString(newAction, "Mark Action"));
+//                AttributeSet as = null;
+//                EditTextPreference p = myMgrPrefs.(newAction, "Mark Action"); // TODO: @string
+//                EditTextPreference p = EditTextPreference(this.findViewById(R.id.prefs)); //x.getContext()
+//                PreferenceScreen screen = createPreferenceHierarchy();
+                PreferenceScreen newPref = getPreferenceManager().createPreferenceScreen(this);
+                newPref.setKey(newAction);
+                newPref.setTitle(myMgrPrefs.getString(newAction, "Mark Action"));
+                newPref.setSummary("Click to change action name"); // use @string
+                newPref.setOnPreferenceChangeListener(mChangeAction); // turn on listener
+                getPreferenceScreen().addPreference(newPref);
+
+//                View v = this.findViewById(R.id.prefs);
+//                EditTextPreference z = new EditTextPreference(v.getContext());
+//                z.setTitle(myMgrPrefs.getString(newAction, "Mark Action"));
+//                z.setText(myMgrPrefs.getString(newAction, "Mark Action"));
+//                v.setPadding(5, 5, 5, 5);
+//                ArrayList<EditTextPreference> y = new ArrayList(1);
+//                y.add(z);
+//                v.addTouchables(y);
+
+//                al = ; TODO: restart here
+//                EditTextPreference p.setKey(newAction);
+//                getPreferenceScreen().addPreference(p);//  .findPreference(newAction);
+
+                Log.i(TAG, "added Pref: " + newAction + ", " + myMgrPrefs.getString(newAction, "Mark Action"));
             }
         }
-        //SharedPreferences myGetPrefs = getPreferences(R.id.prefs);
         //Map<String, ?> foo = myGetPrefs.getAll();
         //Log.i(TAG, "myGetPrefs: " + foo.toString());
         //Log.i(TAG, "action1 Mgr: " + myMgrPrefs.getString("action1", "Mark Action"));
+        Log.i(TAG, "myMgrPrefs: " + myMgrPrefs.getAll().toString());
     }
 
     private void addNewAction() {
         //SharedPreferences myPrefs = getPreferences(R.xml.preferences); // fail
+        //addPreferencesFromResource(R.id.prefs); // NotFoundException
         SharedPreferences myMgrPrefs = PreferenceManager
             .getDefaultSharedPreferences(this);
+//        SharedPreferences myMgrPrefs = getPreferences(R.id.prefs);
 
-        Map<String, ?> bar = myMgrPrefs.getAll();
-        Log.i(TAG, "myMgrPrefs: " + bar.toString());
-        int len = bar.size();
-        Log.i(TAG, "myMgrPrefs: " + bar.toString());
-        Log.i(TAG, "adding: action" + (len+1));
+        // add to shared preferences
+        // Map<String, ?> bar = myMgrPrefs.getAll();
+        int len = myMgrPrefs.getAll().size(); // -1 for 0 based, + 1 for new value = size
+        String newAction = "action" + len;
+        Log.i(TAG, "adding: " + newAction);
 
-        //Log.i(TAG, "onCreate myPrefs: " + myMrgrPrefs.toString());
         Editor e = myMgrPrefs.edit();
-        e.putString("action" + (len + 1), "Mark Action");
+        e.putString(newAction, "Mark Action"); // TODO: @string?
         e.commit();
-//        addPreferencesFromResource(R.id.prefs); // NotFoundException
+        Log.i(TAG, "myMgrPrefs: " + myMgrPrefs.getAll().toString());
 
-//        SharedPreferences myPrefs = PreferenceManager
-//        .getDefaultSharedPreferences(this);
+        // add to activity
+        PreferenceScreen newPref = getPreferenceManager().createPreferenceScreen(this);
+        newPref.setKey(newAction);
+        newPref.setTitle("Mark Action");
+        newPref.setSummary("Click to change action name"); // use @string
+        newPref.setOnPreferenceChangeListener(mChangeAction); // turn on listener
+        getPreferenceScreen().addPreference(newPref);
     }
 
     private void removeAction() {
-        //SharedPreferences myPrefs = getPreferences(R.xml.preferences); // fail
         SharedPreferences myMgrPrefs = PreferenceManager
             .getDefaultSharedPreferences(this);
-
-        Map<String, ?> bar = myMgrPrefs.getAll();
-        int len = bar.size();
-        Log.i(TAG, "removing: action" + (len));
+//        SharedPreferences myMgrPrefs = getPreferences(R.id.prefs);
+        int len = myMgrPrefs.getAll().size()-1; // 0 based
+        if (len == 0) {
+            // TODO: inform dialog box - can't remove last item
+            return;
+        }
         // TODO: confirmation dialog box
 
+        // remove from prefs
+        // Map<String, ?> bar = myMgrPrefs.getAll();
+        String remPref = "action" + len;
+        Log.i(TAG, "removing: " + remPref);
+
         Editor e = myMgrPrefs.edit();
-        e.remove("action" + len);
+        e.remove(remPref);
         e.commit();
+        Log.i(TAG, "myMgrPrefs: " + myMgrPrefs.getAll().toString());
+
+        // remove from activity
+        final PreferenceScreen s = getPreferenceScreen();
+        s.removePreference(s.findPreference(remPref));
     }
 
     OnPreferenceChangeListener mChangeAction = new OnPreferenceChangeListener() {
@@ -99,9 +152,9 @@ public class prefs extends PreferenceActivity {
             //    .getDefaultSharedPreferences(getBaseContext());
             //SharedPreferences.Editor ed = myPrefs.edit();
             //ed.putString(changedPref.getKey(), String.valueOf(newValue));
-            Log.i(TAG, "changedPref " + changedPref.toString());
+            //Log.i(TAG, "changedPref " + changedPref.toString());
             changedPref.setTitle(String.valueOf(newValue));
-            Log.i(TAG, "newValue " + newValue.toString());
+            //Log.i(TAG, "newValue " + newValue.toString());
             return true;
         }
     };

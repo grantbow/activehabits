@@ -5,11 +5,13 @@
     android:layout_height="fill_parent" >
   <Button
     android:id="@+id/log_event_button"
-    android:layout_width="fill_parent" 
-    android:layout_height="fill_parent" 
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
     android:text="@string/logEventButtonString"
     android:clickable="true"
     android:focusableInTouchMode="true"
     android:focusable="true"
-    android:longClickable="true"/>
+    android:longClickable="false"
+    android:padding="5,5,5,5"/>
+    <!-- enable longClickable again later -->
 </LinearLayout>
