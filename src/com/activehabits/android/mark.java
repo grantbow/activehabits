@@ -15,11 +15,13 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Map;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -32,7 +34,6 @@ public class mark extends Activity implements OnClickListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // set up layout
         setContentView(R.layout.main);
     }
 
@@ -42,23 +43,60 @@ public class mark extends Activity implements OnClickListener {
         // load default preferences
         SharedPreferences myMgrPrefs = PreferenceManager
             .getDefaultSharedPreferences(this);
-        //SharedPreferences myMgrPrefs = getPreferences(R.id.prefs);
-        //Map<String, ?> foo = myPrefs.getAll();
-        //Log.i(TAG, "myPrefs: " + foo.toString());
-        //Preference x = ("action0");
+        setContentView(R.layout.main);
 
-        // set up button(s)
+        // set up action0 button
         Button logEventButton = (Button) findViewById(R.id.log_event_button);
         logEventButton.setText(myMgrPrefs.getString("action0", "Mark Action"));
+        logEventButton.setMinLines(3);
+        logEventButton.setPadding(10, 10, 10, 10);
         logEventButton.setOnClickListener((OnClickListener) this);
 
-        // TODO: initial value set, make sure it gets updated
-        //myPrefs.registerOnSharedPreferenceChangeListener();
+        // add more buttons if they exist
+        Map<String, ?> bar = myMgrPrefs.getAll();
+        Log.i(TAG, "mark myMgrPrefs: " + bar.toString());
+        int len = bar.size();
+        String newAction;
+        //View container = findViewById(R.layout.main);
+//        Log.i(TAG, "mark container:" + container.toString());
+        for (int i = 1; i < len ; ++i) { // i=1, don't run for action0
+            newAction = "action" + i;
+            //Log.i(TAG, "mark testing: '" + newAction + "'");
+            if ( bar.containsKey(newAction) ) { // TODO: & ! (findView(newAction)) ) {
+                Log.i(TAG, "mark 003");
+                //if (container.findViewWithTag(newAction) == null) {
+                //    Log.i(TAG, "ADD");
+                //}
+                Log.i(TAG, "mark 004");
+                // add new button to activity
+                Log.i(TAG, "mark need to add: " + newAction + ", " + (String) bar.get(newAction));
 
-//        Log.i(TAG, "action0: " + myPrefs.getString("action0", "Mark Action"));
+                Button newButton = new Button(this);
+                newButton.setMinLines(3);
+                newButton.setPadding(10, 10, 10, 10);
+                newButton.setTag(newAction);
+                newButton.setText(myMgrPrefs.getString(newAction, "Mark Action"));
+                newButton.setClickable(true);
+                newButton.setFocusableInTouchMode(false);
+                newButton.setFocusable(true);
+                newButton.setLongClickable(false); // for now
+                newButton.setOnClickListener((OnClickListener) this);
+                //logEventButton.getParent();
+                //logEventButton.getLayout().addTouchables(newButton);
+                //.addPreference(newButton);
+                //((ViewGroup) container).addView(newButton));
+                ((ViewGroup) logEventButton.getParent()).addView(newButton);
+
+                Log.i(TAG, "mark added: " + newAction + ", " + myMgrPrefs.getString(newAction, "Mark Action"));
+            }
+        }
+        //Map<String, ?> foo = myGetPrefs.getAll();
+        //Log.i(TAG, "mark myGetPrefs: " + foo.toString());
+        //Log.i(TAG, "mark action1 Mgr: " + myMgrPrefs.getString("action1", "Mark Action"));
+        Log.i(TAG, "mark myMgrPrefs: " + myMgrPrefs.getAll().toString());
+
+//        Log.i(TAG, "mark action0: " + myPrefs.getString("action0", "Mark Action"));
 //        registerForContextMenu(logEventButton);
-
-        // setPreferences(int)?
 
         boolean mExternalStorageAvailable = false;
     	boolean mExternalStorageWriteable = false;
