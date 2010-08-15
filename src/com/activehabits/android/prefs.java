@@ -5,6 +5,7 @@ import java.util.Map;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
+import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
@@ -57,7 +58,12 @@ public class prefs extends PreferenceActivity {
 
                 ////Log.i(TAG, "01");
                 //Preference newPref = findPreference(newAction);
-                //EditTextPreference newEditText = new EditTextPreference;
+                EditTextPreference newPref = new EditTextPreference(this);
+                newPref.setKey(newAction);
+                newPref.setTitle((CharSequence)bar.get(newAction));
+                newPref.setSummary("Click to change action name"); // use @string
+                newPref.setOnPreferenceChangeListener(mChangeAction);//(OnPreferenceChangeListener) this); // turn on listener
+                getPreferenceScreen().addPreference(newPref);
                 //Preference newScreen = new EditTextPreference(this);
 //////////////// WHY CAN'T I CREATE A PREFERENCE!?
                 // don't need a real "EditTextPreference"? need a screen and hook up the right methods for onPreferenceClick
@@ -68,25 +74,25 @@ public class prefs extends PreferenceActivity {
                 //Preference newScreen = getPreferenceManager().findPreference(newAction);
                 ////Log.i(TAG, "01.1");
                 // gives a null pointer exception
-                PreferenceScreen newScreen = getPreferenceManager().createPreferenceScreen(this);//.getNewPreferenceScreen(newAction);
+               //PreferenceScreen newScreen = getPreferenceManager().createPreferenceScreen(this);//.getNewPreferenceScreen(newAction);
 
                 ////Log.i(TAG, "01.1.1");
-                newScreen.setKey(newAction);
+               //newScreen.setKey(newAction);
 
-                newScreen.setTitle(myMgrPrefs.getString(newAction, "Mark Action"));
+               //newScreen.setTitle(myMgrPrefs.getString(newAction, "Mark Action"));
                 ////Log.i(TAG, "01.1.2");
-                newScreen.setSummary("Click to change action name"); // use @string
-                newScreen.setOnPreferenceChangeListener(mChangeAction);//(OnPreferenceChangeListener) this); // turn on listener
+               //newScreen.setSummary("Click to change action name"); // use @string
+               //newScreen.setOnPreferenceChangeListener(mChangeAction);//(OnPreferenceChangeListener) this); // turn on listener
                 // NullPointerException
                 ////Log.i(TAG, "01.2");
-                newScreen.setOnPreferenceClickListener(x.getOnPreferenceClickListener());// turn on listener
+               //newScreen.setOnPreferenceClickListener(x.getOnPreferenceClickListener());// turn on listener
                 ////Log.i(TAG, "01.3");
                 // mClickAction // mChangeAction
                 //newScreen.addPreference(newPref); // null pointer
-                getPreferenceScreen().addPreference(newScreen);
-                Log.i(TAG, "01.3");
+               //getPreferenceScreen().addPreference(newScreen);
+               //Log.i(TAG, "01.3");
 
-                Log.i(TAG, "02");
+                //Log.i(TAG, "02");
 //                Log.i(TAG, "prefs newPref: " + newPref.toString());
 //                Log.i(TAG, "03");
 //                Log.i(TAG, "prefs screen: " + getPreferenceScreen().toString());
@@ -125,13 +131,12 @@ public class prefs extends PreferenceActivity {
         Log.i(TAG, "prefs myMgrPrefs: " + myMgrPrefs.getAll().toString());
 
         // add to activity
-        PreferenceScreen newPref = getPreferenceManager().createPreferenceScreen(this);
-        //EditTextPreference newPref = getPreferenceManager().getDefaultSharedPreferences().;
-        //EditTextPreference newPref = new EditTextPreference(x.getContext());
+       //PreferenceScreen newPref = getPreferenceManager().createPreferenceScreen(this);
+        EditTextPreference newPref = new EditTextPreference(this);
         newPref.setKey(newAction);
         newPref.setTitle("Mark Action");
         newPref.setSummary("Click to change action name"); // use @string
-        newPref.setOnPreferenceClickListener(mClickAction);
+        //newPref.setOnPreferenceClickListener(mClickAction);
         newPref.setOnPreferenceChangeListener(mChangeAction); // turn on listener
         getPreferenceScreen().addPreference(newPref);
     }

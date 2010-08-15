@@ -11,11 +11,13 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.Display;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 
@@ -45,17 +47,30 @@ public class mark extends Activity implements OnClickListener {
             .getDefaultSharedPreferences(this);
         setContentView(R.layout.main);
 
+        // prepare to add more buttons if they exist
+        Map<String, ?> bar = myMgrPrefs.getAll();
+        Log.i(TAG, "mark myMgrPrefs: " + bar.toString());
+        int len = bar.size();
+
+        // roughly each button height = screen size / 1+len
+        //         subtract for padding
+        Display container = ((WindowManager)this.getSystemService(WINDOW_SERVICE)).getDefaultDisplay();
+//        Log.i(TAG, "mark vars1: " + container.toString() );
+        Log.i(TAG, "mark vars2: " + container.getHeight());//(int) container.getHeight() );
+        final Integer buttonHeight;
+        if (len == 0) {
+            buttonHeight = (Integer) ((container.getHeight() - (10*(len+2) )) / (1)); }
+        else {
+            buttonHeight = (Integer) ((container.getHeight() - (10*(len+2) )) / (len)); }
         // set up action0 button
         Button logEventButton = (Button) findViewById(R.id.log_event_button);
         logEventButton.setText(myMgrPrefs.getString("action0", "Mark Action"));
         logEventButton.setMinLines(3);
         logEventButton.setPadding(10, 10, 10, 10);
         logEventButton.setOnClickListener((OnClickListener) this);
+        logEventButton.setHeight(buttonHeight);
 
-        // add more buttons if they exist
-        Map<String, ?> bar = myMgrPrefs.getAll();
-        Log.i(TAG, "mark myMgrPrefs: " + bar.toString());
-        int len = bar.size();
+        // prepare to add more buttons if they exist
         String newAction;
         //View container = findViewById(R.layout.main);
 //        Log.i(TAG, "mark container:" + container.toString());
@@ -81,6 +96,7 @@ public class mark extends Activity implements OnClickListener {
                 newButton.setFocusable(true);
                 newButton.setLongClickable(false); // for now
                 newButton.setOnClickListener((OnClickListener) this);
+                newButton.setHeight(buttonHeight);
                 //logEventButton.getParent();
                 //logEventButton.getLayout().addTouchables(newButton);
                 //.addPreference(newButton);
