@@ -12,6 +12,5 @@
     android:clickable="true"
     android:focusableInTouchMode="false"
     android:focusable="true"
-    android:longClickable="false"/>
-    <!-- enable longClickable again later -->
+    android:longClickable="true"/>
 </LinearLayout>

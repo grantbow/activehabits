@@ -5,7 +5,7 @@
     android:layout_height="wrap_content" >
   <EditText 
     android:text="@string/actionname" 
-    android:layout_width="220dip"
+    android:layout_width="fill_parent"
     />
   <NegativeButton android:id="@id/button_cancel" />
   <PositiveButton android:id="@+id/ok_rename_button" />

@@ -10,7 +10,7 @@
     <string name="about">About-</string> <!-- TODO: about string -->
     <string name="close">Close</string>
     <string name="copyrecent">Copy Recent</string>
-    <string name="rename">Rename</string>
+    <string name="renameaction">Rename</string>
     <string name="unmark">Unmark</string>
     <string name="history">History</string>
     <string name="remove">Remove</string>
@@ -18,5 +18,5 @@
     <string name="cancel">Cancel</string>
     <string name="actionname">Action name:</string>
     <string name="addaction">Add Action</string>
-    <string name="removeaction">Remove Last Action</string>
+    <string name="removeaction">Remove Action</string>
 </resources>

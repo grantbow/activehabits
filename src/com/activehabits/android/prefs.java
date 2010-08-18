@@ -103,13 +103,13 @@ public class prefs extends PreferenceActivity {
                 //newPref.setText(newAction);
                 //newPref.setOnClickPreferenceListener((OnClickListener) this);
 
-                Log.i(TAG, "prefs added: " + newAction + ", " + myMgrPrefs.getString(newAction, "Mark Action"));
+                Log.i(TAG, "prefs added: " + newAction);
             }
         }
         //Map<String, ?> foo = myGetPrefs.getAll();
         //Log.i(TAG, "myGetPrefs: " + foo.toString());
         //Log.i(TAG, "action1 Mgr: " + myMgrPrefs.getString("action1", "Mark Action"));
-        Log.i(TAG, "prefs myMgrPrefs: " + myMgrPrefs.getAll().toString());
+        //Log.i(TAG, "prefs myMgrPrefs: " + myMgrPrefs.getAll().toString());
     }
 
     private void addNewAction() {
@@ -160,14 +160,11 @@ public class prefs extends PreferenceActivity {
         Editor e = myMgrPrefs.edit();
         e.remove(remPref);
         e.commit();
-        Log.i(TAG, "prefs myMgrPrefs: " + myMgrPrefs.getAll().toString());
+        //Log.i(TAG, "prefs myMgrPrefs: " + myMgrPrefs.getAll().toString());
 
         // remove from activity
-        Log.i(TAG, "00001");
         final PreferenceScreen s = getPreferenceScreen();
-        Log.i(TAG, "00002");
         s.removePreference(s.findPreference(remPref)); //null pointer exception
-        Log.i(TAG, "00003");
     }
 
     OnPreferenceChangeListener mChangeAction = new OnPreferenceChangeListener() {
@@ -207,11 +204,11 @@ public class prefs extends PreferenceActivity {
         menu.removeItem(R.id.mark);  // disable mark  item
         menu.removeItem(R.id.chart); // disable chart item
         menu.removeItem(R.id.prefs); // we are in prefs so disable prefs item
-        menu.removeItem(R.id.quit); // disable chart item
-        if ( menu.findItem(R.id.addaction) == null ) {
+        menu.removeItem(R.id.quit); // disable quit item
+        if ( menu.findItem(R.id.removeaction) == null ) {
             //TODO: prefs context menu order
             Log.i(TAG, "prefs order: " + menu.findItem(R.id.about).getOrder());
-            menu.add(Menu.FIRST, R.id.addaction, Menu.FIRST, getString(R.string.addaction));
+            //menu.add(Menu.FIRST, R.id.addaction, Menu.FIRST, getString(R.string.addaction)); // moved to menu
             menu.add(Menu.FIRST, R.id.removeaction, Menu.FIRST, getString(R.string.removeaction));
         }
         return true;

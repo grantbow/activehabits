@@ -1,9 +1,11 @@
 package com.activehabits.android;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.content.res.Resources;
 import android.location.Location;
 import android.location.LocationManager;
@@ -11,6 +13,8 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -30,8 +34,10 @@ import java.io.IOException;
 import java.lang.String;
 
 public class mark extends Activity implements OnClickListener {
-	private static final String TAG = "ActiveHabits.mark";
+	private static final String TAG = "ActiveHabits.mark"; // for Log.i(TAG, ...);
 	private static FileWriter writer;
+    private static Integer paddingValue = 3; // * 10 pixels for calculating button sizes
+
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -47,21 +53,21 @@ public class mark extends Activity implements OnClickListener {
             .getDefaultSharedPreferences(this);
         setContentView(R.layout.main);
 
-        // prepare to add more buttons if they exist
+        // prepare to add more buttons from myMgrPrefs if they exist
         Map<String, ?> bar = myMgrPrefs.getAll();
         Log.i(TAG, "mark myMgrPrefs: " + bar.toString());
         int len = bar.size();
 
         // roughly each button height = screen size / 1+len
-        //         subtract for padding
+        //         subtract for padding - use self.paddingValue
         Display container = ((WindowManager)this.getSystemService(WINDOW_SERVICE)).getDefaultDisplay();
 //        Log.i(TAG, "mark vars1: " + container.toString() );
         Log.i(TAG, "mark vars2: " + container.getHeight());//(int) container.getHeight() );
-        final Integer buttonHeight;
+        Integer buttonHeight;
         if (len == 0) {
-            buttonHeight = (Integer) ((container.getHeight() - (10*(len+2) )) / (1)); }
+            buttonHeight = (Integer) ((container.getHeight() - (10*(mark.paddingValue+1) )) / (1)); }
         else {
-            buttonHeight = (Integer) ((container.getHeight() - (10*(len+2) )) / (len)); }
+            buttonHeight = (Integer) ((container.getHeight() - (10*(len+mark.paddingValue) )) / (len)); }
         // set up action0 button
         Button logEventButton = (Button) findViewById(R.id.log_event_button);
         logEventButton.setText(myMgrPrefs.getString("action0", "Mark Action"));
@@ -69,6 +75,7 @@ public class mark extends Activity implements OnClickListener {
         logEventButton.setPadding(10, 10, 10, 10);
         logEventButton.setOnClickListener((OnClickListener) this);
         logEventButton.setHeight(buttonHeight);
+        registerForContextMenu(logEventButton);
 
         // prepare to add more buttons if they exist
         String newAction;
@@ -78,32 +85,15 @@ public class mark extends Activity implements OnClickListener {
             newAction = "action" + i;
             //Log.i(TAG, "mark testing: '" + newAction + "'");
             if ( bar.containsKey(newAction) ) { // TODO: & ! (findView(newAction)) ) {
-                Log.i(TAG, "mark 003");
                 //if (container.findViewWithTag(newAction) == null) {
                 //    Log.i(TAG, "ADD");
                 //}
-                Log.i(TAG, "mark 004");
+
                 // add new button to activity
-                Log.i(TAG, "mark need to add: " + newAction + ", " + (String) bar.get(newAction));
+                Log.i(TAG, "mark need to add: " + newAction + ", " + (String) bar.get(newAction) + ", " +buttonHeight);
+                createNewButton(newAction, myMgrPrefs.getString(newAction, "Mark Action"), buttonHeight);
 
-                Button newButton = new Button(this);
-                newButton.setMinLines(3);
-                newButton.setPadding(10, 10, 10, 10);
-                newButton.setTag(newAction);
-                newButton.setText(myMgrPrefs.getString(newAction, "Mark Action"));
-                newButton.setClickable(true);
-                newButton.setFocusableInTouchMode(false);
-                newButton.setFocusable(true);
-                newButton.setLongClickable(false); // for now
-                newButton.setOnClickListener((OnClickListener) this);
-                newButton.setHeight(buttonHeight);
-                //logEventButton.getParent();
-                //logEventButton.getLayout().addTouchables(newButton);
-                //.addPreference(newButton);
-                //((ViewGroup) container).addView(newButton));
-                ((ViewGroup) logEventButton.getParent()).addView(newButton);
-
-                Log.i(TAG, "mark added: " + newAction + ", " + myMgrPrefs.getString(newAction, "Mark Action"));
+                Log.i(TAG, "mark added: " + newAction);
             }
         }
         //Map<String, ?> foo = myGetPrefs.getAll();
@@ -157,6 +147,26 @@ public class mark extends Activity implements OnClickListener {
     	  }
     }
 
+    private void createNewButton(String newAction, String newActionString, Integer newButtonHeight) {
+    	// add new button to activity
+        Button newButton = new Button(this);
+        newButton.setMinLines(3);
+        newButton.setPadding(10, 10, 10, 10);
+        newButton.setTag(newAction);
+        newButton.setText(newActionString);
+        newButton.setClickable(true);
+        newButton.setLongClickable(true);
+        newButton.setFocusableInTouchMode(false);
+        newButton.setFocusable(true);
+        newButton.setOnClickListener((OnClickListener) this);
+        newButton.setHeight(newButtonHeight);
+        registerForContextMenu(newButton);
+        View logEventButton = findViewById(R.id.log_event_button);
+        ((ViewGroup) logEventButton.getParent()).addView(newButton);
+
+        Log.i(TAG, "mark added: " + newAction + ", " + newActionString);
+    }
+    
     @Override
     public void onPause() {
     	try {
@@ -170,17 +180,17 @@ public class mark extends Activity implements OnClickListener {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(Menu menu) { // bottom menu
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.habit_menu, menu);
         return true;
     }
 
     @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
+    public boolean onPrepareOptionsMenu(Menu menu) { // bottom menu
         super.onPrepareOptionsMenu(menu);
         menu.removeItem(R.id.mark); // we are in mark so disable mark item
-        // is it possible to make menu 1 x 3 instad of 2x2?
+        // is it possible to make menu 1 x 3 instead of 2x2?
 //      ((ViewGroup) menu.getItem(R.id.chart)).setPadding(1,10,10,1);
         return true;
     }
@@ -198,6 +208,9 @@ public class mark extends Activity implements OnClickListener {
             return true;
 //      case R.id.social:
 //          return true;
+        case R.id.addaction:
+        	addNewAction();
+            return true;
         case R.id.prefs:
             Intent myPrefIntent = new Intent(this,prefs.class);
             startActivity(myPrefIntent);
@@ -275,47 +288,84 @@ public class mark extends Activity implements OnClickListener {
     	finish();
 	}
 
-//    @Override
-//    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-//        super.onCreateContextMenu(menu, v, menuInfo);
-//        MenuInflater inflater = getMenuInflater();
-//        inflater.inflate(R.menu.context_menu, menu);
-//    }
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.context_menu, menu);
+    }
 
-//    @Override
-//    public boolean onContextItemSelected(MenuItem item) {
-//        AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
-//        // Handle item selection
-//        switch (item.getItemId()) {
-//        case R.id.rename:
-//            renameEvent(info.id);
-//            return true;
-//        case R.id.remove:
-//            removeEvent(info.id);
-//            return true;
-//        default:
-//            return super.onContextItemSelected(item);
-//        }
-//    }
+    private void addNewAction() {
+        //SharedPreferences myPrefs = getPreferences(R.xml.preferences); // fail
+        //addPreferencesFromResource(R.id.prefs); // NotFoundException
+        SharedPreferences myMgrPrefs = PreferenceManager
+            .getDefaultSharedPreferences(this);
+//        SharedPreferences myMgrPrefs = getPreferences(R.id.prefs);
 
-//    private void renameEvent(long id) {
-//        // from Context Item
-//        showDialog(R.id.dialog_rename);
-//    }
-//
-//    private void removeEvent(long id) {
-//        // from Context Item
-//
-//    }
+        // add to shared preferences
+        // Map<String, ?> bar = myMgrPrefs.getAll();
+        int len = myMgrPrefs.getAll().size(); // -1 for 0 based, + 1 for new value = size
+        String newAction = "action" + len;
+        Log.i(TAG, "mark adding: " + newAction + ", " + "Mark Action");
 
-//    @Override
-//    protected Dialog onCreateDialog(int id) {
-//        switch(id) {
-//        case R.id.rename:
-//            rn.SetText("eventname");
-//            default:
-//                return null;
-//        }
-//    }
+        Editor e = myMgrPrefs.edit();
+        e.putString(newAction, "Mark Action"); // TODO: @string?
+        e.commit();
+        Log.i(TAG, "mark myMgrPrefs: " + myMgrPrefs.getAll().toString());
+
+        // calculate new buttonHeight
+        Display container = ((WindowManager)this.getSystemService(WINDOW_SERVICE)).getDefaultDisplay();
+        final Integer buttonHeight;
+        // we are adding a button, len will be OK.
+        buttonHeight = (Integer) ((container.getHeight() - (10*(mark.paddingValue) )) / (len));
+    	// resize existing buttons to buttonHeight
+        ViewGroup context = (ViewGroup) findViewById(R.id.log_event_button).getParent();
+        Integer i;
+        for (i = 0; i < len; ++i) {
+        	Log.i(TAG, "mark resizing " + i + ", " + context.getChildAt(i) + " to " + buttonHeight);
+            ((Button) context.getChildAt(i)).setHeight(buttonHeight);
+        }
+        // add button to activity
+        createNewButton(newAction, "Mark Action", buttonHeight);
+        // redraw
+        Intent myPrefIntent = new Intent(this,mark.class);
+        startActivity(myPrefIntent);
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        //AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+        // Handle item selection
+        switch (item.getItemId()) {
+        case R.id.renameaction:
+        	showDialog(R.id.dialog_rename);
+            return true;
+        case R.id.removeaction:
+            removeEvent(item);
+            return true;
+        default:
+            return super.onContextItemSelected(item);
+        }
+    }
+
+    private void removeEvent(MenuItem item) { // from Context Item
+    	// confirm dialog box?
+    	// reorder and reassign
+    	// remove last item
+    	// redraw
+        Intent myPrefIntent = new Intent(this,mark.class);
+        startActivity(myPrefIntent);
+    }
+
+    @Override
+    protected Dialog onCreateDialog(int id) {
+        switch(id) {
+        case R.id.renameaction:
+        	Button rn = (Button) findViewById(id);
+            rn.setText("eventname");
+        default:
+            return null;
+        }
+    }
 
 };
