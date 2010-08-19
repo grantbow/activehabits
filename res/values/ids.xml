@@ -9,4 +9,5 @@
     <item type="id" name="removeaction" />
     <item type="id" name="clearsplashed" />
     <item type="id" name="ButtonSplashOK" />
+    <item type="id" name="ButtonAboutOK" />
 </resources>

@@ -8,7 +8,7 @@
     <string name="chart">Chart</string>
     <string name="social">Social</string>
     <string name="prefs">Preferences</string>
-    <string name="about">About-</string> <!-- TODO: about string -->
+    <string name="about">About</string> <!-- TODO: about string -->
     <string name="close">Close</string>
     <string name="copyrecent">Copy Recent</string>
     <string name="renameaction">Rename</string>

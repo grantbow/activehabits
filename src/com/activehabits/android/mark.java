@@ -231,7 +231,9 @@ public class mark extends Activity implements OnClickListener {
             startActivity(myPrefIntent);
             return true;
         case R.id.about:
-            return true; // TODO: about from mark
+            Intent myAboutIntent = new Intent(this,about.class);
+            startActivity(myAboutIntent);
+            return true;
         case R.id.quit: {
             finish();
             return true;

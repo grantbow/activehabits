@@ -2,6 +2,7 @@ package com.activehabits.android;
 
 import java.util.Map;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
@@ -135,7 +136,7 @@ public class prefs extends PreferenceActivity {
         EditTextPreference newPref = new EditTextPreference(this);
         newPref.setKey(newAction);
         newPref.setTitle(getString(R.string.markaction));
-        newPref.setSummary(getString(R.string.clicktochange)); // use @string
+        newPref.setSummary(getString(R.string.clicktochange));
         //newPref.setOnPreferenceClickListener(mClickAction);
         newPref.setOnPreferenceChangeListener(mChangeAction); // turn on listener
         getPreferenceScreen().addPreference(newPref);
@@ -251,7 +252,9 @@ public class prefs extends PreferenceActivity {
 //            return true;
 //        }
         case R.id.about:
-            return true; // TODO: about from prefs
+            Intent myAboutIntent = new Intent(this,about.class);
+            startActivity(myAboutIntent);
+            return true;
 //        case R.id.quit: {
 //            finish();
 //            return true;
