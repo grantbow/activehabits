@@ -7,4 +7,6 @@
     <item type="id" name="prefs" />
     <item type="id" name="addaction" />
     <item type="id" name="removeaction" />
+    <item type="id" name="clearsplashed" />
+    <item type="id" name="ButtonSplashOK" />
 </resources>

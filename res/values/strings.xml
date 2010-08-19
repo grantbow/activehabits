@@ -20,4 +20,6 @@
     <string name="actionname">Action name:</string>
     <string name="addaction">Add Action</string>
     <string name="removeaction">Remove Action</string>
+    <string name="clearsplashed">Restore Splash Page</string>
+    <string name="splash">ActiveHabits Introduction</string>
 </resources>

@@ -141,6 +141,9 @@ public class prefs extends PreferenceActivity {
         getPreferenceScreen().addPreference(newPref);
     }
 
+//    private void clearSplashed() {
+//    	prefs.;
+//    }
     private void removeAction() {
         SharedPreferences myMgrPrefs = PreferenceManager
             .getDefaultSharedPreferences(this);
@@ -210,6 +213,7 @@ public class prefs extends PreferenceActivity {
             Log.i(TAG, "prefs order: " + menu.findItem(R.id.about).getOrder());
             //menu.add(Menu.FIRST, R.id.addaction, Menu.FIRST, getString(R.string.addaction)); // moved to menu
             menu.add(Menu.FIRST, R.id.removeaction, Menu.FIRST, getString(R.string.removeaction));
+            //menu.add(Menu.FIRST, R.id.clearsplashed, Menu.FIRST, getString(R.string.clearsplashed));
         }
         return true;
     }
@@ -242,6 +246,10 @@ public class prefs extends PreferenceActivity {
             removeAction();
             return true;
         }
+//        case R.id.clearsplashed: {
+//            clearSplashed();
+//            return true;
+//        }
         case R.id.about:
             return true; // TODO: about from prefs
 //        case R.id.quit: {

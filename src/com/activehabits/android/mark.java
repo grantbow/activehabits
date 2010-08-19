@@ -37,6 +37,7 @@ public class mark extends Activity implements OnClickListener {
 	private static final String TAG = "ActiveHabits.mark"; // for Log.i(TAG, ...);
 	private static FileWriter writer;
     private static Integer paddingValue = 3; // * 10 pixels for calculating button sizes
+	private static Integer splashed = 0;
 
     /** Called when the activity is first created. */
     @Override
@@ -76,6 +77,20 @@ public class mark extends Activity implements OnClickListener {
         logEventButton.setOnClickListener((OnClickListener) this);
         logEventButton.setHeight(buttonHeight);
         registerForContextMenu(logEventButton);
+        
+        final CharSequence setTo = logEventButton.getText();
+        final CharSequence defaultSetTo = getString(R.string.markaction);
+        
+        Log.i(TAG, "mark splash? " + setTo + ", " + defaultSetTo);
+
+        if (setTo.equals(defaultSetTo) & (mark.splashed == 0)) {     // strange syntax to make it compare
+            //Log.i(TAG, "mark splash - bingo");
+            mark.splashed = 1;
+        	// assume if first action is not changed from default
+        	//     this is first run or help is needed so show splash
+        	Intent mySplashIntent = new Intent(this,splash.class);
+        	startActivityForResult(mySplashIntent,1);
+        }
 
         // prepare to add more buttons if they exist
         String newAction;
