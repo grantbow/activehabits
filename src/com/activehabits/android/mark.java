@@ -38,6 +38,7 @@ public class mark extends Activity implements OnClickListener {
 	private static FileWriter writer;
     private static Integer paddingValue = 3; // * 10 pixels for calculating button sizes
 	private static Integer splashed = 0;
+	private static MenuItem contextMenuItem;
 
     /** Called when the activity is first created. */
     @Override
@@ -355,7 +356,9 @@ public class mark extends Activity implements OnClickListener {
         // Handle item selection
         switch (item.getItemId()) {
         case R.id.renameaction:
-        	showDialog(R.id.dialog_rename);
+        	contextMenuItem = item;
+        	Button rn = (Button) contextMenuItem;
+            //rn.setText(showDialog(R.id.dialog_rename));
             return true;
         case R.id.removeaction:
             removeEvent(item);
@@ -363,6 +366,20 @@ public class mark extends Activity implements OnClickListener {
         default:
             return super.onContextItemSelected(item);
         }
+    }
+
+    @Override
+    protected Dialog onCreateDialog(int id) {
+        switch(id) {
+        case R.id.renameaction:
+        	// change preference
+        	// change button
+        default:
+            return null;
+        }
+    }
+
+    private void renameEvent(MenuItem item) { // from Context Item
     }
 
     private void removeEvent(MenuItem item) { // from Context Item
@@ -373,16 +390,5 @@ public class mark extends Activity implements OnClickListener {
         Intent myPrefIntent = new Intent(this,mark.class);
         startActivity(myPrefIntent);
     }
-
-    @Override
-    protected Dialog onCreateDialog(int id) {
-        switch(id) {
-        case R.id.renameaction:
-        	Button rn = (Button) findViewById(id);
-            rn.setText("eventname");
-        default:
-            return null;
-        }
-    }
-
+    
 };

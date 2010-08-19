@@ -154,7 +154,7 @@ public class chart extends Activity {
       }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(Menu menu) { // TODO: why no Options menu at the bottom?
         MenuInflater inflater = getMenuInflater();
         menu.removeItem(R.id.chart); // we are in chart so disable chart menu item
         inflater.inflate(R.menu.habit_menu, menu);
