@@ -99,7 +99,7 @@ public class mark extends Activity implements OnClickListener {
         for (int i = 1; i < len ; ++i) { // i=1, don't run for action0
             newAction = "action" + i;
             //Log.i(TAG, "mark testing: '" + newAction + "'");
-            if ( bar.containsKey(newAction) ) { // TODO: & ! (findView(newAction)) ) {
+            if ( bar.containsKey(newAction) ) { // & ! (findView(newAction)) ) {
                 //if (container.findViewWithTag(newAction) == null) {
                 //    Log.i(TAG, "ADD");
                 //}

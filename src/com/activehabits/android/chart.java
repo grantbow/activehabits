@@ -31,7 +31,7 @@ import org.achartengine.renderer.XYSeriesRenderer;
 
 public class chart extends Activity {
 	private static final String TAG = "ActiveHabits.chart";
-	private static final Integer MAXEVENTS = 50; // TODO: fix max # events String[] of 50
+	private static final Integer MAXEVENTS = 50; // fixed max # events String[] of 50 for now
 
 	/* Called when the activity is first created. */
     @Override
@@ -113,7 +113,7 @@ public class chart extends Activity {
         // long minXvalue = eventSec[0] * 1000; // Seconds to Milliseconds
         // Random r = new Random();
         for (int i = 0; i < 1; i++) { // only one series until eventNames change
-          TimeSeries series = new TimeSeries("Marked Events"); // eventName
+          TimeSeries series = new TimeSeries("All Marked Actions"); // eventName
           for (int k = 0; k < nr; k++) {
             series.add(new Date(Long.parseLong(eventSec[k])*1000), Double.parseDouble(eventHour[k]));
           }
@@ -185,7 +185,9 @@ public class chart extends Activity {
             startActivity(myPrefIntent);
             return true;
         case R.id.about:
-            return true; // TODO: about from chart
+            Intent myAboutIntent = new Intent(this,about.class);
+            startActivity(myAboutIntent);
+            return true;
         case R.id.quit: {
             finish();
             return true;
@@ -203,7 +205,7 @@ public class chart extends Activity {
 //  }
 
     @Override
-    protected Dialog onCreateDialog(int id) { // TODO: chart OnPrepareDialog
+    protected Dialog onCreateDialog(int id) {
         switch(id) {
         case R.id.dialog_choose_chart:
             // Respond to anything from this dialog by drawing right now.

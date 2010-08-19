@@ -15,7 +15,7 @@
     </ImageView>
     <TextView
         android:id="@+id/TextView01"
-        android:text="\n    To get started, rename your 'habits' to something meaningful to you.  Click the habit's button to mark/record an action.\n\n    This reminder screen will disappear when you rename the first action.\n"
+        android:text="\n    To get started, rename your 'habits' to something meaningful to you.  Click the habit's button to mark/record an action.\n\nCreated by http://activehabits.com\n"
         android:layout_gravity="center"
         android:clickable="true"
         android:hapticFeedbackEnabled="true"

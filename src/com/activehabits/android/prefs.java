@@ -12,7 +12,6 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
 import android.preference.Preference.OnPreferenceChangeListener;
-import android.preference.Preference.OnPreferenceClickListener;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -151,10 +150,10 @@ public class prefs extends PreferenceActivity {
 //        SharedPreferences myMgrPrefs = getPreferences(R.id.prefs);
         int len = myMgrPrefs.getAll().size()-1; // 0 based
         if (len == 0) {
-            // TODO: inform dialog box - can't remove last item
+            // TODO: remove action - inform can't remove last item
             return;
         }
-        // TODO: confirmation dialog box
+        // TODO: remove action confirmation dialog box
 
         // remove from prefs
         // Map<String, ?> bar = myMgrPrefs.getAll();
@@ -184,16 +183,16 @@ public class prefs extends PreferenceActivity {
         }
     };
 
-    OnPreferenceClickListener mClickAction = new OnPreferenceClickListener() {
-        public boolean onPreferenceClick(Preference toChangePref) {
-            Log.i(TAG, "prefs toChangePref " + toChangePref.toString());
-            //getPreferenceScreen().getDialog();
-            //TODO: mClickAction
-            //changingPref.; // hmm!!!!
-            //Log.i(TAG, "prefs newValue " + newValue.toString());
-            return true;
-        }
-    };
+//    OnPreferenceClickListener mClickAction = new OnPreferenceClickListener() {
+//        public boolean onPreferenceClick(Preference toChangePref) {
+//            Log.i(TAG, "prefs toChangePref " + toChangePref.toString());
+//            //getPreferenceScreen().getDialog();
+//            // mClickAction
+//            //changingPref.; // hmm!!!!
+//            //Log.i(TAG, "prefs newValue " + newValue.toString());
+//            return true;
+//        }
+//    };
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -210,7 +209,7 @@ public class prefs extends PreferenceActivity {
         menu.removeItem(R.id.prefs); // we are in prefs so disable prefs item
         menu.removeItem(R.id.quit); // disable quit item
         if ( menu.findItem(R.id.removeaction) == null ) {
-            //TODO: prefs context menu order
+            // want to change prefs context menu order
             Log.i(TAG, "prefs order: " + menu.findItem(R.id.about).getOrder());
             //menu.add(Menu.FIRST, R.id.addaction, Menu.FIRST, getString(R.string.addaction)); // moved to menu
             menu.add(Menu.FIRST, R.id.removeaction, Menu.FIRST, getString(R.string.removeaction));
