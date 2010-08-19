@@ -8,9 +8,9 @@
     android:id="@+id/log_event_button"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:text="@string/logEventButtonString"
+    android:text="@string/markaction"
     android:clickable="true"
+    android:longClickable="true"
     android:focusableInTouchMode="false"
-    android:focusable="true"
-    android:longClickable="true"/>
+    android:focusable="true"/>
 </LinearLayout>

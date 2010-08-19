@@ -70,7 +70,7 @@ public class mark extends Activity implements OnClickListener {
             buttonHeight = (Integer) ((container.getHeight() - (10*(len+mark.paddingValue) )) / (len)); }
         // set up action0 button
         Button logEventButton = (Button) findViewById(R.id.log_event_button);
-        logEventButton.setText(myMgrPrefs.getString("action0", "Mark Action"));
+        logEventButton.setText(myMgrPrefs.getString("action0", getString(R.string.markaction)));
         logEventButton.setMinLines(3);
         logEventButton.setPadding(10, 10, 10, 10);
         logEventButton.setOnClickListener((OnClickListener) this);
@@ -91,17 +91,17 @@ public class mark extends Activity implements OnClickListener {
 
                 // add new button to activity
                 Log.i(TAG, "mark need to add: " + newAction + ", " + (String) bar.get(newAction) + ", " +buttonHeight);
-                createNewButton(newAction, myMgrPrefs.getString(newAction, "Mark Action"), buttonHeight);
+                createNewButton(newAction, myMgrPrefs.getString(newAction, getString(R.string.markaction)), buttonHeight);
 
                 Log.i(TAG, "mark added: " + newAction);
             }
         }
         //Map<String, ?> foo = myGetPrefs.getAll();
         //Log.i(TAG, "mark myGetPrefs: " + foo.toString());
-        //Log.i(TAG, "mark action1 Mgr: " + myMgrPrefs.getString("action1", "Mark Action"));
+        //Log.i(TAG, "mark action1 Mgr: " + myMgrPrefs.getString("action1", getString(R.string.markaction)));
         Log.i(TAG, "mark myMgrPrefs: " + myMgrPrefs.getAll().toString());
 
-//        Log.i(TAG, "mark action0: " + myPrefs.getString("action0", "Mark Action"));
+//        Log.i(TAG, "mark action0: " + myPrefs.getString("action0", getString(R.string.markaction)));
 //        registerForContextMenu(logEventButton);
 
         boolean mExternalStorageAvailable = false;
@@ -306,10 +306,10 @@ public class mark extends Activity implements OnClickListener {
         // Map<String, ?> bar = myMgrPrefs.getAll();
         int len = myMgrPrefs.getAll().size(); // -1 for 0 based, + 1 for new value = size
         String newAction = "action" + len;
-        Log.i(TAG, "mark adding: " + newAction + ", " + "Mark Action");
+        Log.i(TAG, "mark adding: " + newAction + ", " + getString(R.string.markaction));
 
         Editor e = myMgrPrefs.edit();
-        e.putString(newAction, "Mark Action"); // TODO: @string?
+        e.putString(newAction, getString(R.string.markaction));
         e.commit();
         Log.i(TAG, "mark myMgrPrefs: " + myMgrPrefs.getAll().toString());
 
@@ -326,7 +326,7 @@ public class mark extends Activity implements OnClickListener {
             ((Button) context.getChildAt(i)).setHeight(buttonHeight);
         }
         // add button to activity
-        createNewButton(newAction, "Mark Action", buttonHeight);
+        createNewButton(newAction, getString(R.string.markaction), buttonHeight);
         // redraw
         Intent myPrefIntent = new Intent(this,mark.class);
         startActivity(myPrefIntent);

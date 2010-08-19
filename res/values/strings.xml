@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="logEventButtonString">Mark Action</string>
+    <string name="markaction">Mark Action</string>
+    <string name="clicktochange">Click to change action name</string>
     <string name="log_event_filename">activehabits.txt</string>
     <string name="app_name">ActiveHabits</string>
     <string name="mark">Mark</string>

@@ -36,14 +36,14 @@ public class prefs extends PreferenceActivity {
         // init action0 title & listener
         Preference x = findPreference("action0"); // activity object
         x.setOnPreferenceChangeListener(mChangeAction); // turn on listener
-        x.setTitle(myMgrPrefs.getString("action0", "Mark Action"));
+        x.setTitle(myMgrPrefs.getString("action0", getString(R.string.markaction)));
 
         Log.i(TAG, "action0 ChangeListener: " + x.getOnPreferenceChangeListener()); // null
         Log.i(TAG, "action0 ClickListener: " + x.getOnPreferenceClickListener()); // null
 
         //x.setOnClickPreferenceListener(this);
 
-        ////Log.i(TAG, "prefs action0 Mgr: " + myMgrPrefs.getString("action0", "Mark Action"));
+        ////Log.i(TAG, "prefs action0 Mgr: " + myMgrPrefs.getString("action0", getString(R.string.markaction)));
 
         // add more prefs if they exist
         Map<String, ?> bar = myMgrPrefs.getAll();
@@ -61,7 +61,7 @@ public class prefs extends PreferenceActivity {
                 EditTextPreference newPref = new EditTextPreference(this);
                 newPref.setKey(newAction);
                 newPref.setTitle((CharSequence)bar.get(newAction));
-                newPref.setSummary("Click to change action name"); // use @string
+                newPref.setSummary(getString(R.string.clicktochange)); // use @string
                 newPref.setOnPreferenceChangeListener(mChangeAction);//(OnPreferenceChangeListener) this); // turn on listener
                 getPreferenceScreen().addPreference(newPref);
                 //Preference newScreen = new EditTextPreference(this);
@@ -79,9 +79,9 @@ public class prefs extends PreferenceActivity {
                 ////Log.i(TAG, "01.1.1");
                //newScreen.setKey(newAction);
 
-               //newScreen.setTitle(myMgrPrefs.getString(newAction, "Mark Action"));
+               //newScreen.setTitle(myMgrPrefs.getString(newAction, getString(R.string.markaction)));
                 ////Log.i(TAG, "01.1.2");
-               //newScreen.setSummary("Click to change action name"); // use @string
+               //newScreen.setSummary(getString(R.string.clicktochange)); // use @string
                //newScreen.setOnPreferenceChangeListener(mChangeAction);//(OnPreferenceChangeListener) this); // turn on listener
                 // NullPointerException
                 ////Log.i(TAG, "01.2");
@@ -108,7 +108,7 @@ public class prefs extends PreferenceActivity {
         }
         //Map<String, ?> foo = myGetPrefs.getAll();
         //Log.i(TAG, "myGetPrefs: " + foo.toString());
-        //Log.i(TAG, "action1 Mgr: " + myMgrPrefs.getString("action1", "Mark Action"));
+        //Log.i(TAG, "action1 Mgr: " + myMgrPrefs.getString("action1", getString(R.string.markaction)));
         //Log.i(TAG, "prefs myMgrPrefs: " + myMgrPrefs.getAll().toString());
     }
 
@@ -126,7 +126,7 @@ public class prefs extends PreferenceActivity {
         Log.i(TAG, "prefs adding: " + newAction);
 
         Editor e = myMgrPrefs.edit();
-        e.putString(newAction, "Mark Action"); // TODO: @string?
+        e.putString(newAction, getString(R.string.markaction));
         e.commit();
         Log.i(TAG, "prefs myMgrPrefs: " + myMgrPrefs.getAll().toString());
 
@@ -134,8 +134,8 @@ public class prefs extends PreferenceActivity {
        //PreferenceScreen newPref = getPreferenceManager().createPreferenceScreen(this);
         EditTextPreference newPref = new EditTextPreference(this);
         newPref.setKey(newAction);
-        newPref.setTitle("Mark Action");
-        newPref.setSummary("Click to change action name"); // use @string
+        newPref.setTitle(getString(R.string.markaction));
+        newPref.setSummary(getString(R.string.clicktochange)); // use @string
         //newPref.setOnPreferenceClickListener(mClickAction);
         newPref.setOnPreferenceChangeListener(mChangeAction); // turn on listener
         getPreferenceScreen().addPreference(newPref);
