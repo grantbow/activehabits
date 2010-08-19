@@ -2,8 +2,10 @@ package com.activehabits.android;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.View;
+import android.view.View.OnClickListener;
 
-public class splash extends Activity {
+public class splash extends Activity implements OnClickListener {
     //private static final String TAG = "ActiveHabits.mark";
 	//private static OnClickListener mSplashListener;
     
@@ -11,20 +13,19 @@ public class splash extends Activity {
         super.onCreate(savedInstanceState);
         //Log.i(TAG, "splash");
         setContentView(R.layout.splash);
+        View v;
+        v = (View)findViewById(R.id.ImageView01);
+        v.setOnClickListener(this);
+        v = (View)findViewById(R.id.TextView01);
+        v.setOnClickListener(this);
+        v = (View)findViewById(R.id.ButtonSplashOK);
+        v.setOnClickListener(this);
+        //v.setOnLongClickListener(this);
     }
     
-//    private OnClickListener mSplashListener = new OnClickListener() {
-//        public void onClick(View v) {
-//          // finish when the button is clicked
-//            finish();
-//        }
-//    };
+    public void onClick(View v) {
+      // finish when the button is clicked
+        finish();
+    }
 
-//    public void onClick(View v) {
-//    	finish();
-//    }
-
-//    public void onTouch(View v) {
-//    	finish();
-//    }
 }
