@@ -1,8 +1,10 @@
 package com.activehabits.android;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -16,6 +18,7 @@ import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Display;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -34,11 +37,12 @@ import java.io.IOException;
 import java.lang.String;
 
 public class mark extends Activity implements OnClickListener {
-	private static final String TAG = "ActiveHabits.mark"; // for Log.i(TAG, ...);
-	private static FileWriter writer;
-    private static Integer paddingValue = 3; // * 10 pixels for calculating button sizes
-	private static Integer splashed = 0;
-	private static MenuItem contextMenuItem;
+    private static final String TAG = "ActiveHabits.mark"; // for Log.i(TAG, ...);
+    private static FileWriter writer;
+    private static int paddingValue = 3; // * 10 pixels for calculating button sizes
+    private static int splashed = 0;
+    //private static MenuItem contextMenuItem;
+    //private static final int renameDialogInt = 649324; R.layout.rename
 
     /** Called when the activity is first created. */
     @Override
@@ -356,9 +360,9 @@ public class mark extends Activity implements OnClickListener {
         // Handle item selection
         switch (item.getItemId()) {
         case R.id.renameaction:
-        	contextMenuItem = item;
-        	Button rn = (Button) contextMenuItem;
-            //rn.setText(showDialog(R.id.dialog_rename));
+        	//contextMenuItem = item;
+            //showDialog(renameDialogInt); R.layout.rename
+        	showDialog(R.layout.rename);
             return true;
         case R.id.removeaction:
             removeEvent(item);
@@ -370,17 +374,51 @@ public class mark extends Activity implements OnClickListener {
 
     @Override
     protected Dialog onCreateDialog(int id) {
+    	Dialog dialog;
         switch(id) {
-        case R.id.renameaction:
+        case R.layout.rename: //renameDialogInt:
+        	LayoutInflater factory = LayoutInflater.from(mark.this);
+        	final View textEntryView = factory.inflate(R.layout.rename, null);
+        	return new AlertDialog.Builder(mark.this)
+            //.setIcon(R.drawable.alert_dialog_icon)
+            .setTitle(R.string.renametitle)
+            .setView(textEntryView)
+            .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+
+                    /* User clicked OK so do some stuff */
+                }
+            })
+            .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+
+                    /* User clicked cancel so do some stuff */
+                }
+            })
+            .create();
+        	//(R.layout.rename);
         	// change preference
         	// change button
+        	//DialogInterface.setOnDismissListener(this.onDismiss());
         default:
-            return null;
+            return dialog = null;
         }
     }
 
-    private void renameEvent(MenuItem item) { // from Context Item
-    }
+//    @Override
+//	public void onDismiss(DialogInterface di){
+//    	Button rn = (Button) contextMenuItem;
+//        rn.setText();
+//        removeDialog(R.layout.rename);
+//    }
+
+//    protected Dialog onPrepareDialog(int id) {
+//    	Dialog d;
+//    	return d;
+//    }
+
+//    private void renameEvent(MenuItem item) { // from Context Item
+//    }
 
     private void removeEvent(MenuItem item) { // from Context Item
     	// confirm dialog box?

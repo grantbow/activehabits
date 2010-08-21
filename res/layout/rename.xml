@@ -3,10 +3,19 @@
     android:orientation="vertical"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content" >
+    <TextView
+    android:id="@+id/rename_prompt"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="@string/renameprompt"
+    android:gravity="center"
+    
+    />
   <EditText 
     android:text="@string/actionname" 
     android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
     />
-  <NegativeButton android:id="@id/button_cancel" />
-  <PositiveButton android:id="@+id/ok_rename_button" />
+<!--  <NegativeButton android:id="@id/button_cancel" />
+  <PositiveButton android:id="@+id/ok_rename_button" />  --> 
 </LinearLayout>

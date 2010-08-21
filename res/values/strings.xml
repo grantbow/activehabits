@@ -22,4 +22,6 @@
     <string name="removeaction">Remove Action</string>
     <string name="clearsplashed">Restore Splash Page</string>
     <string name="splash">Welcome to ActiveHabits</string>
+    <string name="renameprompt">Enter the new name:</string>
+    <string name="renametitle">Rename Action</string>
 </resources>
