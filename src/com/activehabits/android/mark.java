@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.location.Location;
 import android.location.LocationManager;
@@ -27,6 +28,8 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -35,13 +38,14 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.String;
+import java.nio.charset.Charset;
 
 public class mark extends Activity implements OnClickListener {
     private static final String TAG = "ActiveHabits.mark"; // for Log.i(TAG, ...);
     private static FileWriter writer;
     private static int paddingValue = 3; // * 10 pixels for calculating button sizes
     private static int splashed = 0;
-    //private static MenuItem contextMenuItem;
+    private static View contextMenuItem;
     //private static final int renameDialogInt = 649324; R.layout.rename
 
     /** Called when the activity is first created. */
@@ -89,7 +93,6 @@ public class mark extends Activity implements OnClickListener {
         Log.i(TAG, "mark splash? " + setTo + ", " + defaultSetTo);
 
         if (setTo.equals(defaultSetTo) & (mark.splashed == 0)) {     // strange syntax to make it compare
-            //Log.i(TAG, "mark splash - bingo");
             mark.splashed = 1;
         	// assume if first action is not changed from default
         	//     this is first run or help is needed so show splash
@@ -99,30 +102,15 @@ public class mark extends Activity implements OnClickListener {
 
         // prepare to add more buttons if they exist
         String newAction;
-        //View container = findViewById(R.layout.main);
-//        Log.i(TAG, "mark container:" + container.toString());
         for (int i = 1; i < len ; ++i) { // i=1, don't run for action0
             newAction = "action" + i;
-            //Log.i(TAG, "mark testing: '" + newAction + "'");
             if ( bar.containsKey(newAction) ) { // & ! (findView(newAction)) ) {
-                //if (container.findViewWithTag(newAction) == null) {
-                //    Log.i(TAG, "ADD");
-                //}
-
                 // add new button to activity
-                Log.i(TAG, "mark need to add: " + newAction + ", " + (String) bar.get(newAction) + ", " +buttonHeight);
+                //Log.i(TAG, "mark need to add: " + newAction + ", " + (String) bar.get(newAction) + ", " +buttonHeight);
                 createNewButton(newAction, myMgrPrefs.getString(newAction, getString(R.string.markaction)), buttonHeight);
-
-                Log.i(TAG, "mark added: " + newAction);
             }
         }
-        //Map<String, ?> foo = myGetPrefs.getAll();
-        //Log.i(TAG, "mark myGetPrefs: " + foo.toString());
-        //Log.i(TAG, "mark action1 Mgr: " + myMgrPrefs.getString("action1", getString(R.string.markaction)));
         Log.i(TAG, "mark myMgrPrefs: " + myMgrPrefs.getAll().toString());
-
-//        Log.i(TAG, "mark action0: " + myPrefs.getString("action0", getString(R.string.markaction)));
-//        registerForContextMenu(logEventButton);
 
         boolean mExternalStorageAvailable = false;
     	boolean mExternalStorageWriteable = false;
@@ -310,13 +298,6 @@ public class mark extends Activity implements OnClickListener {
     	finish();
 	}
 
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.context_menu, menu);
-    }
-
     private void addNewAction() {
         //SharedPreferences myPrefs = getPreferences(R.xml.preferences); // fail
         //addPreferencesFromResource(R.id.prefs); // NotFoundException
@@ -355,6 +336,14 @@ public class mark extends Activity implements OnClickListener {
     }
 
     @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.context_menu, menu);
+        contextMenuItem = v; // TODO: move, only run on first call
+    }
+
+    @Override
     public boolean onContextItemSelected(MenuItem item) {
         //AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
         // Handle item selection
@@ -365,6 +354,7 @@ public class mark extends Activity implements OnClickListener {
         	showDialog(R.layout.rename);
             return true;
         case R.id.removeaction:
+        	//contextMenuItem = item;
             removeEvent(item);
             return true;
         default:
@@ -374,34 +364,58 @@ public class mark extends Activity implements OnClickListener {
 
     @Override
     protected Dialog onCreateDialog(int id) {
-    	Dialog dialog;
+    	//Dialog dialog;
         switch(id) {
-        case R.layout.rename: //renameDialogInt:
+        case R.layout.rename: //renameDialogInt: // from Context Item
         	LayoutInflater factory = LayoutInflater.from(mark.this);
         	final View textEntryView = factory.inflate(R.layout.rename, null);
+        	
+        	// prepare default text of dialog box with button name
+        	//Resources ress = textEntryView.getResources();
+        	//Log.i(TAG, "res current button name " + ((Button)contextMenuItem).getText() ); // shows new data for R.id.renametext
+            View y = textEntryView.findViewById(R.id.renametext);
+            //Log.i(TAG, "res y " + y.toString());
+            ((TextView) y).setText(((Button)contextMenuItem).getText());
+
+        	/* return the constructed AlertDialog */
+            // TODO: can enter be intercepted during dialog text entry?
         	return new AlertDialog.Builder(mark.this)
-            //.setIcon(R.drawable.alert_dialog_icon)
             .setTitle(R.string.renametitle)
             .setView(textEntryView)
             .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int whichButton) {
-
-                    /* User clicked OK so do some stuff */
+                    /* User clicked OK */
+                	View b = textEntryView.findViewById(R.id.renametext);
+                	final CharSequence ca;
+                	ca = (CharSequence)((EditText) b).getText();
+                	final CharSequence x = ((Button)contextMenuItem).getText();
+                	// TODO: if result not null & ! equal to old result
+                    /* change preference */
+                	CharSequence newAction = (CharSequence) ((Button)contextMenuItem).getTag();
+                	Log.i(TAG, "change " + newAction + " from " + x + " to " + ca );
+                    SharedPreferences myMgrPrefs = PreferenceManager
+                        .getDefaultSharedPreferences(getBaseContext());
+                    //Log.i(TAG, "mark myMgrPrefs before: " + myMgrPrefs.getAll().toString() );
+                    Editor e = myMgrPrefs.edit();
+                    e.putString( newAction.toString(), ca.toString());
+                    e.commit();
+                    //Log.i(TAG, "mark myMgrPrefs  after: " + myMgrPrefs.getAll().toString());
+                	
+                    /* change button */
+                	((Button)contextMenuItem).setText(ca);
                 }
             })
             .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int whichButton) {
-
-                    /* User clicked cancel so do some stuff */
+                    /* User clicked cancel so do nothing */
                 }
             })
+            //.setIcon(R.drawable.alert_dialog_icon)
             .create();
         	//(R.layout.rename);
-        	// change preference
-        	// change button
         	//DialogInterface.setOnDismissListener(this.onDismiss());
         default:
-            return dialog = null;
+            return null;
         }
     }
 
@@ -412,12 +426,12 @@ public class mark extends Activity implements OnClickListener {
 //        removeDialog(R.layout.rename);
 //    }
 
-//    protected Dialog onPrepareDialog(int id) {
-//    	Dialog d;
-//    	return d;
-//    }
+    protected Dialog onPrepareDialog(int id) {
+    	//Dialog d;
+    	return null;
+    }
 
-//    private void renameEvent(MenuItem item) { // from Context Item
+//    private void renameEvent(MenuItem item) { 
 //    }
 
     private void removeEvent(MenuItem item) { // from Context Item

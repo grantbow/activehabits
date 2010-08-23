@@ -12,7 +12,8 @@
     
     />
   <EditText 
-    android:text="@string/actionname" 
+    android:id="@id/renametext"
+    android:text="" 
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     />
