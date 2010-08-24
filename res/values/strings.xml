@@ -26,5 +26,5 @@
     <string name="renameprompt">Enter the new name:</string>
     <string name="removetitle">Remove Action</string>
     <string name="removeprompt">Are you sure you want to remove this action?</string>
-    <string name="description">\n    To get started\, long click to rename your \'habits\' to something meaningful to you.  Tap the habit\'s button to mark/record an action.\n\nCreated by http://activehabits.com\n</string>
+    <string name="description">\n    To get started\, long click to rename your \'habits\' to something meaningful to you.  Tap the habit\'s button to mark/record an action.\n\n    We recommend TxtPad Lite (no affiliation) as a convenient way to view or edit the ActiveHabits.txt file that contains the recorded data placed on your SD card.\n\nThis activity was crafted by http://activehabits.com\n</string>
 </resources>
