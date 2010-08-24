@@ -180,10 +180,10 @@ public class chart extends Activity {
 //          return true;
 //      case R.id.social:
 //          return true;
-        case R.id.prefs:
-            Intent myPrefIntent = new Intent(this,prefs.class);
-            startActivity(myPrefIntent);
-            return true;
+//      case R.id.prefs:
+//          Intent myPrefIntent = new Intent(this,prefs.class);
+//          startActivity(myPrefIntent);
+//          return true;
         case R.id.about:
             Intent myAboutIntent = new Intent(this,about.class);
             startActivity(myAboutIntent);

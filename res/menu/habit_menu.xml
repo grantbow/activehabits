@@ -6,8 +6,8 @@
           android:title="@string/chart" />
 <!--<item android:id="@+id/social"
           android:title="@string/social" /> -->
-    <item android:id="@+id/prefs"
-          android:title="@string/prefs" />
+<!--<item android:id="@+id/prefs"
+          android:title="@string/prefs" /> -->
     <item android:id="@+id/addaction"
           android:title="@string/addaction" />
     <item android:id="@+id/about"

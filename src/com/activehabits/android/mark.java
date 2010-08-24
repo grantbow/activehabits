@@ -218,10 +218,10 @@ public class mark extends Activity implements OnClickListener {
         case R.id.addaction:
         	addNewAction();
             return true;
-        case R.id.prefs:
-            Intent myPrefIntent = new Intent(this,prefs.class);
-            startActivity(myPrefIntent);
-            return true;
+//        case R.id.prefs:
+//            Intent myPrefIntent = new Intent(this,prefs.class);
+//            startActivity(myPrefIntent);
+//            return true;
         case R.id.about:
             Intent myAboutIntent = new Intent(this,about.class);
             startActivity(myAboutIntent);
