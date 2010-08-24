@@ -63,14 +63,14 @@ public class mark extends Activity implements OnClickListener {
 
         // prepare to add more buttons from myMgrPrefs if they exist
         Map<String, ?> bar = myMgrPrefs.getAll();
-        Log.i(TAG, "mark myMgrPrefs: " + bar.toString());
+        //Log.i(TAG, "mark myMgrPrefs: " + bar.toString());
         int len = bar.size();
 
         // roughly each button height = screen size / 1+len
         //         subtract for padding - use self.paddingValue
         Display container = ((WindowManager)this.getSystemService(WINDOW_SERVICE)).getDefaultDisplay();
-//        Log.i(TAG, "mark vars1: " + container.toString() );
-        Log.i(TAG, "mark vars2: " + container.getHeight());//(int) container.getHeight() );
+        //Log.i(TAG, "mark vars1: " + container.toString() );
+        //Log.i(TAG, "mark vars2: " + container.getHeight());//(int) container.getHeight() );
         Integer buttonHeight;
         if (len == 0) {
             buttonHeight = (Integer) ((container.getHeight() - (10*(mark.paddingValue+1) )) / (1)); }
@@ -89,7 +89,7 @@ public class mark extends Activity implements OnClickListener {
         final CharSequence setTo = logEventButton.getText();
         final CharSequence defaultSetTo = getString(R.string.markaction);
         
-        Log.i(TAG, "mark splash? " + setTo + ", " + defaultSetTo);
+        //Log.i(TAG, "mark splash? " + setTo + ", " + defaultSetTo);
 
         if (setTo.equals(defaultSetTo) & (mark.splashed == 0)) {     // strange syntax to make it compare
             mark.splashed = 1;
@@ -109,7 +109,7 @@ public class mark extends Activity implements OnClickListener {
                 createNewButton(newAction, myMgrPrefs.getString(newAction, getString(R.string.markaction)), buttonHeight);
             }
         }
-        Log.i(TAG, "mark myMgrPrefs: " + myMgrPrefs.getAll().toString());
+        //Log.i(TAG, "mark myMgrPrefs: " + myMgrPrefs.getAll().toString());
 
         boolean mExternalStorageAvailable = false;
     	boolean mExternalStorageWriteable = false;
@@ -171,7 +171,7 @@ public class mark extends Activity implements OnClickListener {
         View logEventButton = findViewById(R.id.log_event_button);
         ((ViewGroup) logEventButton.getParent()).addView(newButton);
 
-        Log.i(TAG, "mark added: " + newAction + ", " + newActionString);
+        //Log.i(TAG, "mark added: " + newAction + ", " + newActionString);
     }
     
     @Override
@@ -302,7 +302,6 @@ public class mark extends Activity implements OnClickListener {
         //addPreferencesFromResource(R.id.prefs); // NotFoundException
         SharedPreferences myMgrPrefs = PreferenceManager
             .getDefaultSharedPreferences(this);
-//        SharedPreferences myMgrPrefs = getPreferences(R.id.prefs);
 
         // add to shared preferences
         // Map<String, ?> bar = myMgrPrefs.getAll();
@@ -351,7 +350,7 @@ public class mark extends Activity implements OnClickListener {
         	showDialog(R.layout.rename);
             return true;
         case R.id.removeaction:
-            removeEvent(item);
+            showDialog(R.layout.remove);
             return true;
         default:
             return super.onContextItemSelected(item);
@@ -362,6 +361,7 @@ public class mark extends Activity implements OnClickListener {
     protected Dialog onCreateDialog(int id) {
     	//Dialog dialog;
         switch(id) {
+
         case R.layout.rename: //renameDialogInt: // from Context Item
         	LayoutInflater factory = LayoutInflater.from(mark.this);
         	textEntryView = factory.inflate(R.layout.rename, null);
@@ -403,6 +403,50 @@ public class mark extends Activity implements OnClickListener {
             .create();
         	//(R.layout.rename);
         	//DialogInterface.setOnDismissListener(this.onDismiss());
+
+        case R.layout.remove:
+        	LayoutInflater removeFactory = LayoutInflater.from(mark.this);
+        	View confirmView = removeFactory.inflate(R.layout.remove, null);
+
+        	// confirm remove dialog
+        	return new AlertDialog.Builder(mark.this)
+            .setTitle(R.string.removetitle)
+            .setView(confirmView)
+            .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    /* User clicked OK */
+                    /* change preferences by moving all down to fill the gap */
+                	CharSequence oldAction = (CharSequence) ((Button)contextMenuItem).getTag();
+                    SharedPreferences myMgrPrefs = PreferenceManager
+                        .getDefaultSharedPreferences(getBaseContext());
+                    int len = myMgrPrefs.getAll().size();
+                	// assume string of exactly "actionX", X<10
+                	int begin = Integer.parseInt(oldAction.subSequence(6, 7).toString());
+                	//Log.i(TAG, "remove " + oldAction + ", move from " + begin + " to len " + len);
+                    //Log.i(TAG, "mark myMgrPrefs before: " + myMgrPrefs.getAll().toString() );
+                    Editor e = myMgrPrefs.edit();
+                    for (int i = begin; i < len ; ++i) {
+                        String newAction = "action" + i;
+                        String movedAction = "action" + (i+1);
+                        e.putString( newAction, myMgrPrefs.getString(movedAction, "error") ); // error if defaults
+                    }
+                    e.remove("action"+(len-1));
+                    e.commit();
+                    //Log.i(TAG, "mark myMgrPrefs  after: " + myMgrPrefs.getAll().toString());
+
+                    // redraw
+                    Intent myRemovePrefIntent = new Intent(getBaseContext(), mark.class);
+                    startActivity(myRemovePrefIntent);
+                }
+            })
+            .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    /* User clicked cancel so do nothing */
+                }
+            })
+            //.setIcon(R.drawable.alert_dialog_icon)
+            .create();
+
         default:
             return null;
         }
@@ -430,13 +474,5 @@ public class mark extends Activity implements OnClickListener {
 //        rn.setText();
 //        removeDialog(R.layout.rename);
 //    }
-
-    private void removeEvent(MenuItem item) { // from Context Item
-    	// confirm dialog box?
-    	// move all events down to fill the gap
-    	// redraw
-        Intent myPrefIntent = new Intent(this,mark.class);
-        startActivity(myPrefIntent);
-    }
     
 };
