@@ -5,7 +5,7 @@
     <string name="log_event_filename">activehabits.txt</string>
     <string name="app_name">ActiveHabits</string>
     <string name="mark">Mark</string>
-    <string name="chart">Chart</string>
+    <string name="chart">Chart All</string>
     <string name="social">Social</string>
     <string name="prefs">Preferences</string>
     <string name="about">About</string> <!-- TODO: about string -->
@@ -26,4 +26,5 @@
     <string name="renameprompt">Enter the new name:</string>
     <string name="removetitle">Remove Action</string>
     <string name="removeprompt">Are you sure you want to remove this action?</string>
+    <string name="description">\n    To get started\, long click to rename your \'habits\' to something meaningful to you.  Tap the habit\'s button to mark/record an action.\n\nCreated by http://activehabits.com\n</string>
 </resources>

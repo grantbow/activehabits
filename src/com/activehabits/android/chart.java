@@ -51,7 +51,7 @@ public class chart extends Activity {
         catch (NullPointerException e) { e.printStackTrace(); }
     	Log.i(TAG, "chart drawn");
 
-        // TODO: org.achartengine menu
+        // TODO: no options menu in a separate org.achartengine activity, currently uses a separate activity
 
     	finish(); // finishes chart activity, leaves the new org.achartengine* activity
     }
@@ -137,7 +137,7 @@ public class chart extends Activity {
         renderer.setLabelsColor(Color.LTGRAY);
         renderer.setLabelsTextSize(10);
         renderer.setAxesColor(Color.DKGRAY);
-        renderer.setXLabels(3); // TODO: setXLabels sucks, need to addTextLabels at specific points manually
+        renderer.setXLabels(3); // TODO: setXLabels suck, need to addTextLabels at specific points manually
         renderer.setYLabels(3);
         renderer.setXAxisMin(renderer.getXAxisMin() - 86400000);
         renderer.setXAxisMax(renderer.getXAxisMax() + 86400000);
@@ -154,7 +154,7 @@ public class chart extends Activity {
       }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) { // TODO: why no Options menu at the bottom?
+    public boolean onCreateOptionsMenu(Menu menu) {  // function not used, currently uses a separate activity
         MenuInflater inflater = getMenuInflater();
         menu.removeItem(R.id.chart); // we are in chart so disable chart menu item
         inflater.inflate(R.menu.habit_menu, menu);
@@ -162,14 +162,14 @@ public class chart extends Activity {
     }
 
     @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
+    public boolean onPrepareOptionsMenu(Menu menu) {  // function not used, currently uses a separate activity
         super.onPrepareOptionsMenu(menu);
         menu.removeItem(R.id.chart);
         return true;
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(MenuItem item) {  // function not used, currently uses a separate activity
         // Handle item selection
         switch (item.getItemId()) {
         case R.id.mark:
@@ -198,14 +198,14 @@ public class chart extends Activity {
     }
 
 //  @Override
-//  public void onResume() {
+//  public void onResume() {  // function not used, currently uses a separate activity
 //      super.onResume();
 //      //use setPreferences(int)?
 //      //showDialog(R.id.dialog_choose_chart);
 //  }
 
     @Override
-    protected Dialog onCreateDialog(int id) {
+    protected Dialog onCreateDialog(int id) {  // function not used, currently uses a separate activity
         switch(id) {
         case R.id.dialog_choose_chart:
             // Respond to anything from this dialog by drawing right now.
