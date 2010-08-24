@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:layout_gravity="center" >
+    <!-- SurfaceLayout or FrameLayout -->
+
+    <ImageView
+        android:id="@+id/ImageView01"
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <!-- android:onClick=  -->
+    </ImageView>
+    <TextView
+        android:id="@+id/TextView01"
+        android:text="\n    To get started, rename your 'habits' to something meaningful to you.  Click the habit's button to mark/record an action.\n\n    This reminder screen will disappear when you rename the first action.\n"
+        android:layout_gravity="center"
+        android:clickable="true"
+        android:hapticFeedbackEnabled="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" >
+        <!-- "@+id/TextView01" instead of text? -->
+    </TextView>
+    <Button
+        android:id="@+id/ButtonSplashOK"
+        android:text="@string/ok"
+        android:clickable="true"
+        android:hapticFeedbackEnabled="true"
+        android:longClickable="true"
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+    </Button>
+</LinearLayout>
