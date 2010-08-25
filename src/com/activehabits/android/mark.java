@@ -1,5 +1,12 @@
 package com.activehabits.android;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Map;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -9,11 +16,13 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.res.Resources;
+import android.database.Cursor;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -22,21 +31,14 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.SubMenu;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Map;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.lang.String;
 
 public class mark extends Activity implements OnClickListener {
     private static final String TAG = "ActiveHabits.mark"; // for Log.i(TAG, ...);
@@ -338,8 +340,58 @@ public class mark extends Activity implements OnClickListener {
         super.onCreateContextMenu(menu, v, menuInfo);
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.context_menu, menu);
-        contextMenuItem = v; // move to onPrepareContextMenu? only run on first call?
+        contextMenuItem = v; // stores button context menu called from // does not need to move to onPrepareContextMenu
+        SubMenu sub = menu.addSubMenu (0, R.id.playlist, 0, R.string.playlistchange );
+        sub.clear();
+        sub.add(1,R.id.playlistclear,0,R.string.playlistclear);
+
+        // I sure hope the list of playlists doesn't change on me but this function is my only choice
+    	//List<String> listPlay = new ArrayList<String>();
+    	//List<String> listIds = new ArrayList<String>();
+    	/* populate */
+    	String playlistid = null;
+    	String newListName = null;
+
+    	Cursor cursor = getContentResolver().query(
+    			MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI,
+    			null, null, null, null);
+    	if (cursor != null) {
+    	 if (cursor.moveToFirst()) {
+    	  do {
+    	     playlistid = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Playlists._ID));
+    	     newListName = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Playlists.NAME));
+    	     //listPlay.add(newListName);
+    	     //listIds.add(playlistid);
+    	     Intent intent = new Intent();
+    	     intent.putExtra("playlist", Long.parseLong(playlistid));
+    	     // this is a fantastic intent trick from com/android/music/MusicUtils.java and MediaPlaybackActivity.java
+    	     sub.add(2, R.id.playlistselected, Integer.parseInt(playlistid), newListName).setIntent(intent);
+    	  } while (cursor.moveToNext());
+    	     cursor.close();
+    	 }
+    	}
+    	//Log.i(TAG, "playlistid " + playlistid);
+    	//Log.i(TAG, "listPlay " + listPlay.toString());
+    	//Log.i(TAG, "listIds " + listIds.toString());
+        //p.addTouchables(listViews);
+
+//    	// play playlist
+//    	Intent intent = new Intent(Intent.ACTION_VIEW);
+//    	intent.setComponent(new ComponentName("com.android.music","com.android.music.PlaylistBrowserActivity"));
+//    	intent.setType(MediaStore.Audio.Playlists.CONTENT_TYPE);
+//    	intent.setFlags(0x10000000); // need to understand these 3 lines
+//    	//intent.putExtra(playlist, false);
+//    	intent.putExtra("playlist", playlistid);
+//    	startActivity(intent);
+//    	// test mp3 http://download29.jamendo.com/download/track/469312/mp32/24deaf7def/Hope.mp3	
+        
     }
+    
+// Doesn't Exist!!! WTF!?
+//    @Override
+//    public void onPrepareContextMenu(ContextMenu menu) {
+//    	super.onPrepareOptionsMenu(menu);
+//    }
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
@@ -352,6 +404,21 @@ public class mark extends Activity implements OnClickListener {
         case R.id.removeaction:
             showDialog(R.layout.remove);
             return true;
+// moved to context submenu
+//        case R.id.playlist:
+//            showDialog(R.layout.playlist);
+//            return true;
+        case R.id.playlistclear:
+        	Log.i(TAG, "playlistclear");
+        	// set playlist setting to 0
+        	//TODO: figure out where to store playlist data
+        	return true;
+        case R.id.playlistselected:
+            // this is a fantastic intent trick from com/android/music/MusicUtils.java and MediaPlaybackActivity.java
+        	long sel = item.getIntent().getLongExtra("playlist", 0);
+        	Log.i(TAG, "sel " + sel );
+        	// set playlist setting to sel
+        	return true;
         default:
             return super.onContextItemSelected(item);
         }
@@ -403,6 +470,28 @@ public class mark extends Activity implements OnClickListener {
             .create();
         	//(R.layout.rename);
         	//DialogInterface.setOnDismissListener(this.onDismiss());
+
+// moved to context submenu
+//        case R.layout.playlist:
+//        	LayoutInflater playFactory = LayoutInflater.from(mark.this);
+//        	View playView = playFactory.inflate(R.layout.playlist, null);
+//
+//        	/* playlist dialog */
+//        	return new AlertDialog.Builder(mark.this)
+//            .setTitle(R.string.playlist)
+//            .setView(playView)
+//            .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+//                public void onClick(DialogInterface dialog, int whichButton) {
+//                    /* User clicked OK */
+//                }
+//            })
+//            .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+//                public void onClick(DialogInterface dialog, int whichButton) {
+//                    /* User clicked cancel so do nothing */
+//                }
+//            })
+//            //.setIcon(R.drawable.alert_dialog_icon)
+//            .create();
 
         case R.layout.remove:
         	LayoutInflater removeFactory = LayoutInflater.from(mark.this);
@@ -464,15 +553,68 @@ public class mark extends Activity implements OnClickListener {
             //Log.i(TAG, "res y " + y.toString());
             ((TextView) y).setText(((Button)contextMenuItem).getText());
             //Log.i(TAG, "changed");
+// moved to context submenu
+//        case R.layout.playlist:
+//        	/* Get list of playlists */
+//        	//Context.sendOrderedBroadcast(android.);
+//        	
+//        	//foo = MediaStore.Audio.Playlists(MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI);  // Audio.Playlists(android.provider.MediaStore);// android.provider.EXTERNAL_CONTENT_URI);
+//        	//String bar = foo.getContentUri();
+//        	
+//        	//ContentResolver cr = getContentResolver();
+//        	//cr.query(android.provider.MediaStore.Playlists.CONTENT_URI, projection, selection, selectionArgs, sortOrder);//Audio.PlaylistsColumns);
+//
+//        	/* populate ListView */
+//            ViewGroup p = (ViewGroup) findViewById(R.id.playlistlist); // p is a ListView
+//
+//        	List<String> listPlay = new ArrayList<String>();
+//        	List<String> listIds = new ArrayList<String>();
+//        	ArrayList<View> listViews = new ArrayList<View>();
+//        	//String playlist = "oneshot";
+//        	String playlistid = null;
+//        	String newListName = null;
+//        	TextView addMe = null;
+//
+//        	Cursor cursor = getContentResolver().query(
+//        			MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI,
+//        			null, null, null, null);
+//        	if (cursor != null) {
+//        	 if (cursor.moveToFirst()) {
+//        	  do {
+//        	     playlistid = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Playlists._ID));
+//        	     newListName = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Playlists.NAME));
+//        	     listPlay.add(newListName);
+//        	     listIds.add(playlistid);
+//        	     addMe = new Button(getBaseContext());
+//        	     addMe.setText(newListName);
+//        	     addMe.setMinLines(3);
+//        	     addMe.setTag(playlistid);
+//        	     addMe.setClickable(true);
+//        	     addMe.setLongClickable(false);
+//        	     addMe.setFocusableInTouchMode(false);
+//        	     addMe.setFocusable(true);
+//        	     //addMe.setOnClickListener((OnClickListener) this);
+//        	        
+//        	        p.addView(addMe);
+//        	     listViews.add(addMe);
+//        	  } while (cursor.moveToNext());
+//        	     cursor.close();
+//        	 }
+//        	}
+//        	Log.i(TAG, "playlistid " + playlistid);
+//        	Log.i(TAG, "listPlay " + listPlay.toString());
+//        	Log.i(TAG, "listIds " + listIds.toString());
+//            //p.addTouchables(listViews);
+//
+////        	// play playlist
+////        	Intent intent = new Intent(Intent.ACTION_VIEW);
+////        	intent.setComponent(new ComponentName("com.android.music","com.android.music.PlaylistBrowserActivity"));
+////        	intent.setType(MediaStore.Audio.Playlists.CONTENT_TYPE);
+////        	intent.setFlags(0x10000000); // need to understand these 3 lines
+////        	//intent.putExtra(playlist, false);
+////        	intent.putExtra("playlist", playlistid);
+////        	startActivity(intent);
+////        	// test mp3 http://download29.jamendo.com/download/track/469312/mp32/24deaf7def/Hope.mp3	
         }
-        //return d;
     }
-
-//    @Override
-//	public void onDismiss(DialogInterface di){
-//    	Button rn = (Button) contextMenuItem;
-//        rn.setText();
-//        removeDialog(R.layout.rename);
-//    }
-    
 };

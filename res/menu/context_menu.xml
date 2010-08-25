@@ -6,4 +6,6 @@
           android:title="@string/history" /> unmark copyrecent, change date/time, share -->
     <item android:id="@+id/removeaction"
           android:title="@string/removeaction" />
+<!--    <item android:id="@+id/playlist"
+          android:title="@string/playlist" />  // moved to context submenu -->
 </menu>

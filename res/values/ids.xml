@@ -11,4 +11,8 @@
     <item type="id" name="renametext" />
     <item type="id" name="ButtonSplashOK" />
     <item type="id" name="ButtonAboutOK" />
+    <item type="id" name="playlist" />
+    <item type="id" name="playlistlist" />
+    <item type="id" name="playlistclear" />
+    <item type="id" name="playlistselected" />
 </resources>
