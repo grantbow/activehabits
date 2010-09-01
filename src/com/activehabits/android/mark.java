@@ -5,11 +5,14 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -17,6 +20,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.res.Resources;
 import android.database.Cursor;
+import android.graphics.Typeface;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -43,7 +47,7 @@ import android.widget.TextView;
 public class mark extends Activity implements OnClickListener {
     private static final String TAG = "ActiveHabits.mark"; // for Log.i(TAG, ...);
     private static FileWriter writer;
-    private static int paddingValue = 3; // * 10 pixels for calculating button sizes
+    private static int paddingValue = 7; // * 10 pixels for calculating button sizes
     private static int splashed = 0;
     private View contextMenuItem; // button long pressed for context menu
     private View textEntryView;   // TextEntry to update with default value of contextMenuItem
@@ -53,6 +57,9 @@ public class mark extends Activity implements OnClickListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+        // TODO: find onCreate / onResume bug
+        // TODO: handle keyboard opening and closing events - currently crashes sometimes
+        // TODO: default rename field if "Default Action" - set to null
     }
 
     @Override
@@ -66,7 +73,7 @@ public class mark extends Activity implements OnClickListener {
         // prepare to add more buttons from myMgrPrefs if they exist
         Map<String, ?> bar = myMgrPrefs.getAll();
         //Log.i(TAG, "mark myMgrPrefs: " + bar.toString());
-        int len = bar.size();
+        int len = sizeWithoutPl(myMgrPrefs);
 
         // roughly each button height = screen size / 1+len
         //         subtract for padding - use self.paddingValue
@@ -84,6 +91,8 @@ public class mark extends Activity implements OnClickListener {
         logEventButton.setTag("action0");
         logEventButton.setMinLines(3);
         logEventButton.setPadding(10, 10, 10, 10);
+        logEventButton.setTextSize((float)24.0);
+        logEventButton.setTypeface(null, Typeface.BOLD);
         logEventButton.setOnClickListener((OnClickListener) this);
         logEventButton.setHeight(buttonHeight);
         registerForContextMenu(logEventButton);
@@ -101,7 +110,7 @@ public class mark extends Activity implements OnClickListener {
         	startActivityForResult(mySplashIntent,1);
         }
 
-        // prepare to add more buttons if they exist
+        // add more buttons if they exist
         String newAction;
         for (int i = 1; i < len ; ++i) { // i=1, don't run for action0
             newAction = "action" + i;
@@ -112,6 +121,17 @@ public class mark extends Activity implements OnClickListener {
             }
         }
         //Log.i(TAG, "mark myMgrPrefs: " + myMgrPrefs.getAll().toString());
+        
+        /* show history at the bottom */
+        try {
+            View history = new TextView(this);
+            ((TextView) history).setText(myMgrPrefs.getString("lastactionpl", ""));
+            ((ViewGroup) logEventButton.getParent()).addView(history);
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+
 
         boolean mExternalStorageAvailable = false;
     	boolean mExternalStorageWriteable = false;
@@ -161,6 +181,8 @@ public class mark extends Activity implements OnClickListener {
         Button newButton = new Button(this);
         newButton.setMinLines(3);
         newButton.setPadding(10, 10, 10, 10);
+        newButton.setTextSize((float)24.0);
+        newButton.setTypeface(null, Typeface.BOLD);
         newButton.setTag(newAction);
         newButton.setText(newActionString);
         newButton.setClickable(true);
@@ -199,8 +221,8 @@ public class mark extends Activity implements OnClickListener {
     public boolean onPrepareOptionsMenu(Menu menu) { // bottom menu
         super.onPrepareOptionsMenu(menu);
         menu.removeItem(R.id.mark); // we are in mark so disable mark item
+        menu.removeItem(R.id.addaction); // streamlining?
         // is it possible to make menu 1 x 3 instead of 2x2?
-        //((ViewGroup) menu.getItem(R.id.chart)).setPadding(1,10,10,1);
         return true;
     }
 
@@ -208,8 +230,6 @@ public class mark extends Activity implements OnClickListener {
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
         switch (item.getItemId()) {
-//      case R.id.mark: // we are mark Activity, item removed
-//          return true;
         case R.id.chart:
         	Intent myChartIntent = new Intent(this,chart.class);
         	startActivity(myChartIntent);
@@ -220,10 +240,6 @@ public class mark extends Activity implements OnClickListener {
         case R.id.addaction:
         	addNewAction();
             return true;
-//        case R.id.prefs:
-//            Intent myPrefIntent = new Intent(this,prefs.class);
-//            startActivity(myPrefIntent);
-//            return true;
         case R.id.about:
             Intent myAboutIntent = new Intent(this,about.class);
             startActivity(myAboutIntent);
@@ -250,9 +266,6 @@ public class mark extends Activity implements OnClickListener {
             if (loc == null) {
                 // Fall back to coarse location.
                 loc = locator.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-//              Criteria c = new Criteria();
-//              c.setAccuracy(Criteria.NO_REQUIREMENT);
-//              Location loc = locator.getLastKnownLocation(locationManager.getBestProvider(c, true));
                              // criteria, enabledOnly - getLastKnownLocation error check?
             }
         }
@@ -267,27 +280,36 @@ public class mark extends Activity implements OnClickListener {
 
         CharSequence buttonText = ((Button) v).getText();
 
+        Log.i(TAG, "buttonText: " + buttonText);
+        Log.i(TAG, "R.string.markaction: " + getString(R.string.markaction));
+        if (buttonText == ((CharSequence) getString(R.string.markaction))) { // special case
+            // show dialog - rename before pressing a button, marking an action
+        	finish();
+        }
+        
+        long presentTime = (rightnow.getTimeInMillis() / 1000);
+
         try {
         	if (b < 10) {
         		Log.i(TAG, "mark write: "
         		        + buttonText + "\t"
-        		        + (rightnow.getTimeInMillis() / 1000) + "\t"
+        		        + presentTime + "\t"
         		        + x.getHours() + ".0" + b + "\t"
         		        + x.toLocaleString() + "\t" + locString);
-        		writer.append( buttonText + "\t" +
-        		        (rightnow.getTimeInMillis() / 1000) + "\t"
+        		writer.append( buttonText + "\t"
+        		        + presentTime + "\t"
         		        + x.getHours() + ".0" + b + "\t"
         		        + x.toLocaleString() + "\t"
         		        + locString + "\n");
         	} else {
         		Log.i(TAG, "mark write: "
         		        + buttonText + "\t"
-        		        + (rightnow.getTimeInMillis() / 1000) + "\t"
+        		        + presentTime + "\t"
         		        + x.getHours() + "." + b + "\t"
         		        + x.toLocaleString() + "\t"
         		        + locString);
         		writer.append( buttonText + "\t"
-        		        + (rightnow.getTimeInMillis() / 1000) + "\t"
+        		        + presentTime + "\t"
         		        + x.getHours() + "." + b + "\t"
         		        + x.toLocaleString() + "\t"
         		        + locString + "\n");
@@ -296,23 +318,45 @@ public class mark extends Activity implements OnClickListener {
         catch (IOException e) {
         	e.printStackTrace();
         }
+        // if a playlist is set, play it
+        SharedPreferences myMgrPrefs = PreferenceManager
+            .getDefaultSharedPreferences(this);
+        String playAction = (String)v.getTag();
+        String pl = myMgrPrefs.getString( playAction + "pl", null);
+        if ( ! ( pl == null) ) {
+            Log.i(TAG, "play list " + pl);
+    	    Intent intent = new Intent(Intent.ACTION_VIEW);
+    	    intent.setComponent(new ComponentName("com.android.music","com.android.music.PlaylistBrowserActivity"));
+    	    intent.setType(MediaStore.Audio.Playlists.CONTENT_TYPE);
+    	     intent.setFlags(0x10000000); // need to understand these 3 lines
+    	     //intent.putExtra(playlist, false);
+    	    intent.putExtra("playlist", pl );
+            startActivity(intent);
+    	    // test mp3 http://download29.jamendo.com/download/track/469312/mp32/24deaf7def/Hope.mp3	
+        }
+        
+        /* store clicked item as history */
+        // lastactionpl is the key
+        // "[button's name], [human readable date string]" is the value, ready for display
+        Editor e = myMgrPrefs.edit();
+        e.putString("lastactionpl", "last action: " + buttonText + " @ " +  x.toLocaleString() );
+        e.commit();
+
     	finish();
 	}
 
     private void addNewAction() {
-        //SharedPreferences myPrefs = getPreferences(R.xml.preferences); // fail
-        //addPreferencesFromResource(R.id.prefs); // NotFoundException
         SharedPreferences myMgrPrefs = PreferenceManager
             .getDefaultSharedPreferences(this);
 
         // add to shared preferences
-        // Map<String, ?> bar = myMgrPrefs.getAll();
-        int len = myMgrPrefs.getAll().size(); // -1 for 0 based, + 1 for new value = size
+        int len = sizeWithoutPl(myMgrPrefs); // -1 for 0 based, + 1 for new value = size
         String newAction = "action" + len;
         //Log.i(TAG, "mark adding: " + newAction + ", " + getString(R.string.markaction));
 
         Editor e = myMgrPrefs.edit();
         e.putString(newAction, getString(R.string.markaction));
+        e.putString(newAction + "pl", null);
         e.commit();
         //Log.i(TAG, "mark myMgrPrefs: " + myMgrPrefs.getAll().toString());
 
@@ -341,14 +385,18 @@ public class mark extends Activity implements OnClickListener {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.context_menu, menu);
         contextMenuItem = v; // stores button context menu called from // does not need to move to onPrepareContextMenu
-        SubMenu sub = menu.addSubMenu (0, R.id.playlist, 0, R.string.playlistchange );
+        
+        /* create and attach submenu */
+        // TODO: submenu in correct ordering
+        //MenuItem bar = (MenuItem) findViewById(R.id.removeaction);
+        //int foo = bar.getOrder();
+        //Log.i(TAG, "foo: " + foo);
+        SubMenu sub = menu.addSubMenu ( 1, 3, 0, R.string.playlistchange );
         sub.clear();
-        sub.add(1,R.id.playlistclear,0,R.string.playlistclear);
-
+        sub.add( 0, R.id.playlistclear, 0, R.string.playlistclear );
         // I sure hope the list of playlists doesn't change on me but this function is my only choice
-    	//List<String> listPlay = new ArrayList<String>();
-    	//List<String> listIds = new ArrayList<String>();
-    	/* populate */
+
+        /* populate submenu */
     	String playlistid = null;
     	String newListName = null;
 
@@ -370,21 +418,6 @@ public class mark extends Activity implements OnClickListener {
     	     cursor.close();
     	 }
     	}
-    	//Log.i(TAG, "playlistid " + playlistid);
-    	//Log.i(TAG, "listPlay " + listPlay.toString());
-    	//Log.i(TAG, "listIds " + listIds.toString());
-        //p.addTouchables(listViews);
-
-//    	// play playlist
-//    	Intent intent = new Intent(Intent.ACTION_VIEW);
-//    	intent.setComponent(new ComponentName("com.android.music","com.android.music.PlaylistBrowserActivity"));
-//    	intent.setType(MediaStore.Audio.Playlists.CONTENT_TYPE);
-//    	intent.setFlags(0x10000000); // need to understand these 3 lines
-//    	//intent.putExtra(playlist, false);
-//    	intent.putExtra("playlist", playlistid);
-//    	startActivity(intent);
-//    	// test mp3 http://download29.jamendo.com/download/track/469312/mp32/24deaf7def/Hope.mp3	
-        
     }
     
 // Doesn't Exist!!! WTF!?
@@ -395,7 +428,11 @@ public class mark extends Activity implements OnClickListener {
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-        //AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+    	// need these vars for playlistclear and playlistselected
+        SharedPreferences myMgrPrefs = PreferenceManager
+            .getDefaultSharedPreferences(this);
+        Editor e = myMgrPrefs.edit();
+        String theAction = (String) ((Button)contextMenuItem).getTag();
         // Handle item selection
         switch (item.getItemId()) {
         case R.id.renameaction:
@@ -404,20 +441,24 @@ public class mark extends Activity implements OnClickListener {
         case R.id.removeaction:
             showDialog(R.layout.remove);
             return true;
-// moved to context submenu
-//        case R.id.playlist:
-//            showDialog(R.layout.playlist);
-//            return true;
+        case R.id.addaction:
+        	addNewAction();
+            return true;
+        //case R.id.playlist: // done automatically
         case R.id.playlistclear:
-        	Log.i(TAG, "playlistclear");
-        	// set playlist setting to 0
-        	//TODO: figure out where to store playlist data
+        	/* set pl to null */
+        	Log.i(TAG, "playlistclear from " + myMgrPrefs.getString(theAction + "pl", null) + " to null");
+            e.putString(theAction + "pl", null);
+            e.commit();
         	return true;
         case R.id.playlistselected:
             // this is a fantastic intent trick from com/android/music/MusicUtils.java and MediaPlaybackActivity.java
         	long sel = item.getIntent().getLongExtra("playlist", 0);
         	Log.i(TAG, "sel " + sel );
-        	// set playlist setting to sel
+        	/* set pl setting to sel */
+    	    Log.i(TAG, "playlistclear from " + myMgrPrefs.getString(theAction + "pl", null) + " to sel " + sel);
+            e.putString(theAction + "pl", Long.toString(sel) );
+            e.commit();
         	return true;
         default:
             return super.onContextItemSelected(item);
@@ -435,8 +476,9 @@ public class mark extends Activity implements OnClickListener {
         	
         	/* return the constructed AlertDialog */
             // TODO: can enter be intercepted during dialog text entry?
+        	// TODO: change text entry field default value
         	return new AlertDialog.Builder(mark.this)
-            .setTitle(R.string.renametitle)
+            .setTitle(R.string.renametitle) // add text of action
             .setView(textEntryView)
             .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int whichButton) {
@@ -468,30 +510,6 @@ public class mark extends Activity implements OnClickListener {
             })
             //.setIcon(R.drawable.alert_dialog_icon)
             .create();
-        	//(R.layout.rename);
-        	//DialogInterface.setOnDismissListener(this.onDismiss());
-
-// moved to context submenu
-//        case R.layout.playlist:
-//        	LayoutInflater playFactory = LayoutInflater.from(mark.this);
-//        	View playView = playFactory.inflate(R.layout.playlist, null);
-//
-//        	/* playlist dialog */
-//        	return new AlertDialog.Builder(mark.this)
-//            .setTitle(R.string.playlist)
-//            .setView(playView)
-//            .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-//                public void onClick(DialogInterface dialog, int whichButton) {
-//                    /* User clicked OK */
-//                }
-//            })
-//            .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-//                public void onClick(DialogInterface dialog, int whichButton) {
-//                    /* User clicked cancel so do nothing */
-//                }
-//            })
-//            //.setIcon(R.drawable.alert_dialog_icon)
-//            .create();
 
         case R.layout.remove:
         	LayoutInflater removeFactory = LayoutInflater.from(mark.this);
@@ -508,7 +526,7 @@ public class mark extends Activity implements OnClickListener {
                 	CharSequence oldAction = (CharSequence) ((Button)contextMenuItem).getTag();
                     SharedPreferences myMgrPrefs = PreferenceManager
                         .getDefaultSharedPreferences(getBaseContext());
-                    int len = myMgrPrefs.getAll().size();
+                    int len = sizeWithoutPl(myMgrPrefs);
                 	// assume string of exactly "actionX", X<10
                 	int begin = Integer.parseInt(oldAction.subSequence(6, 7).toString());
                 	//Log.i(TAG, "remove " + oldAction + ", move from " + begin + " to len " + len);
@@ -520,6 +538,7 @@ public class mark extends Activity implements OnClickListener {
                         e.putString( newAction, myMgrPrefs.getString(movedAction, "error") ); // error if defaults
                     }
                     e.remove("action"+(len-1));
+                    e.remove("action"+(len-1)+"pl");
                     e.commit();
                     //Log.i(TAG, "mark myMgrPrefs  after: " + myMgrPrefs.getAll().toString());
 
@@ -553,68 +572,31 @@ public class mark extends Activity implements OnClickListener {
             //Log.i(TAG, "res y " + y.toString());
             ((TextView) y).setText(((Button)contextMenuItem).getText());
             //Log.i(TAG, "changed");
-// moved to context submenu
-//        case R.layout.playlist:
-//        	/* Get list of playlists */
-//        	//Context.sendOrderedBroadcast(android.);
-//        	
-//        	//foo = MediaStore.Audio.Playlists(MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI);  // Audio.Playlists(android.provider.MediaStore);// android.provider.EXTERNAL_CONTENT_URI);
-//        	//String bar = foo.getContentUri();
-//        	
-//        	//ContentResolver cr = getContentResolver();
-//        	//cr.query(android.provider.MediaStore.Playlists.CONTENT_URI, projection, selection, selectionArgs, sortOrder);//Audio.PlaylistsColumns);
-//
-//        	/* populate ListView */
-//            ViewGroup p = (ViewGroup) findViewById(R.id.playlistlist); // p is a ListView
-//
-//        	List<String> listPlay = new ArrayList<String>();
-//        	List<String> listIds = new ArrayList<String>();
-//        	ArrayList<View> listViews = new ArrayList<View>();
-//        	//String playlist = "oneshot";
-//        	String playlistid = null;
-//        	String newListName = null;
-//        	TextView addMe = null;
-//
-//        	Cursor cursor = getContentResolver().query(
-//        			MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI,
-//        			null, null, null, null);
-//        	if (cursor != null) {
-//        	 if (cursor.moveToFirst()) {
-//        	  do {
-//        	     playlistid = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Playlists._ID));
-//        	     newListName = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Playlists.NAME));
-//        	     listPlay.add(newListName);
-//        	     listIds.add(playlistid);
-//        	     addMe = new Button(getBaseContext());
-//        	     addMe.setText(newListName);
-//        	     addMe.setMinLines(3);
-//        	     addMe.setTag(playlistid);
-//        	     addMe.setClickable(true);
-//        	     addMe.setLongClickable(false);
-//        	     addMe.setFocusableInTouchMode(false);
-//        	     addMe.setFocusable(true);
-//        	     //addMe.setOnClickListener((OnClickListener) this);
-//        	        
-//        	        p.addView(addMe);
-//        	     listViews.add(addMe);
-//        	  } while (cursor.moveToNext());
-//        	     cursor.close();
-//        	 }
-//        	}
-//        	Log.i(TAG, "playlistid " + playlistid);
-//        	Log.i(TAG, "listPlay " + listPlay.toString());
-//        	Log.i(TAG, "listIds " + listIds.toString());
-//            //p.addTouchables(listViews);
-//
-////        	// play playlist
-////        	Intent intent = new Intent(Intent.ACTION_VIEW);
-////        	intent.setComponent(new ComponentName("com.android.music","com.android.music.PlaylistBrowserActivity"));
-////        	intent.setType(MediaStore.Audio.Playlists.CONTENT_TYPE);
-////        	intent.setFlags(0x10000000); // need to understand these 3 lines
-////        	//intent.putExtra(playlist, false);
-////        	intent.putExtra("playlist", playlistid);
-////        	startActivity(intent);
-////        	// test mp3 http://download29.jamendo.com/download/track/469312/mp32/24deaf7def/Hope.mp3	
+        }
+    }
+    
+    private int sizeWithoutPl(SharedPreferences myMgrPrefs) {
+    	int total = myMgrPrefs.getAll().size();
+        Set<String> baz = myMgrPrefs.getAll().keySet();
+        Iterator<String> bar = baz.iterator();
+        int totalPl = 0;
+        int i;
+        String s;
+        for (i = 0; i < total; ++i) {
+        	s = bar.next();
+            if ( ! (s == null) ) {
+                Log.i(TAG, "s " + s);
+            	if ( s.matches(".*pl") ) {
+                    Log.i(TAG, "s matched");
+            	    totalPl = totalPl+1;
+                }
+            }
+        }
+        Log.i(TAG, "sizeWithoutPl" + " total " + total + ", totalPl " + totalPl);
+        if ((total - totalPl) == 0) {
+        	return 1;
+        } else {
+            return ( total - totalPl );
         }
     }
 };

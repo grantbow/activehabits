@@ -20,7 +20,8 @@
         android:clickable="true"
         android:hapticFeedbackEnabled="true"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:textSize="18sp" >
         <!-- "@+id/TextView01" instead of text? -->
     </TextView>
     <Button
@@ -30,7 +31,7 @@
         android:hapticFeedbackEnabled="true"
         android:longClickable="true"
         android:layout_gravity="center"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content">
     </Button>
 </LinearLayout>
