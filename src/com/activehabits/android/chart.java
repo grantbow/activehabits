@@ -5,7 +5,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Stack;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -32,6 +35,7 @@ import org.achartengine.renderer.XYSeriesRenderer;
 public class chart extends Activity {
 	private static final String TAG = "ActiveHabits.chart";
 	private static final Integer MAXEVENTS = 50; // fixed max # events String[] of 50 for now
+	private Integer DATASETS = 1;
 
 	/* Called when the activity is first created. */
     @Override
@@ -65,6 +69,7 @@ public class chart extends Activity {
         String[] eventMore = new String[MAXEVENTS];
         // assume data on SDcard exists and is good
         // assume no blank lines within data, x.length() > 0
+        // assume no actions with line breaks in them
         // read data from SDcard
         try {
             final File root = Environment.getExternalStorageDirectory();
@@ -77,7 +82,7 @@ public class chart extends Activity {
             while ( x.length() > 0 ) {
                 Log.i(TAG, "buf.readline() " + x); // USEFUL
                 if ( ! x.startsWith("#") ) { // if not a comment
-                    Log.i(TAG, "chart read: " + x);
+                    //Log.i(TAG, "chart read: " + x);
                     temp = x.split("\t", 4); // Max 4 strings split on tabs, perfect
                     //Log.i(TAG, "eventName " + temp[0]);
                     eventName[l] = temp[0];
@@ -99,26 +104,36 @@ public class chart extends Activity {
         } catch (IOException e) { // for problems with reading buf
             e.printStackTrace();
         }
-//        l -= 1; // that wasn't data
 
         // Got Data!
         // currently assumes data is in chronological order
-        // X values are seconds (not milliseconds) from (int) eventSec[0] to eventSec[l]
-        // Y values are hours from eventHour[0] to eventHour[l]
-        // X range varies with start and end times - ideally add buffer on both sides
+        // X chart values are seconds (not milliseconds) from (int) eventSec[0] to eventSec[l]
+        // X range varies with start and end times - TODO: add X range buffers
+        // Y chart values are hours from eventHour[0] to eventHour[l]
         // Y range is 0 - 24 hours in the day TODO: chart from TOP to BOTTOM like a Calendar.
-        // right now each eventName is the same - this will change
+        Stack eventList = new Stack<String>(); // eventList are unique values in eventName
+        for (int k = 0; k < l; k++) {
+            if ( ! eventList.contains(eventName[k]) ) {
+            	eventList.add(eventName[k]);
+            	Log.i(TAG, "eventList add " + eventName[k]);
+            }
+          }
 
-        final int nr = l;
         // long minXvalue = eventSec[0] * 1000; // Seconds to Milliseconds
         // Random r = new Random();
-        for (int i = 0; i < 1; i++) { // only one series until eventNames change
-          TimeSeries series = new TimeSeries("All Marked Actions"); // eventName
-          for (int k = 0; k < nr; k++) {
-            series.add(new Date(Long.parseLong(eventSec[k])*1000), Double.parseDouble(eventHour[k]));
-          }
-          //Log.i(TAG, "series" + series.toString());
-          dataset.addSeries(series);
+        //for (int i = 0; i < 1; i++) { // only one series until eventNames change
+        DATASETS = eventList.size();
+        for (int i = 0; i < DATASETS; i++) {
+            String doit = (String) eventList.pop();
+            TimeSeries series = new TimeSeries(doit); // eventName
+            for (int k = 0; k < l; k++) {
+        	    if (doit.equals(eventName[k])) {
+                    series.add(new Date(Long.parseLong(eventSec[k])*1000), Double.parseDouble(eventHour[k]));
+                    //Log.i(TAG, "plot point in " + doit);
+        	    }
+            }
+            //Log.i(TAG, "series" + series.toString());
+            dataset.addSeries(series);
         }
         //Log.i(TAG, "ready to ship dataset");
         return dataset;
@@ -127,13 +142,53 @@ public class chart extends Activity {
     private XYMultipleSeriesRenderer getRenderer() {
         XYMultipleSeriesRenderer renderer = new XYMultipleSeriesRenderer();
         // prepare XYSeriesRenderer
-        XYSeriesRenderer r = new XYSeriesRenderer();
-        r.setColor(Color.GREEN);
-        r.setPointStyle(PointStyle.TRIANGLE);
-        r.setLineWidth((float) 0.0); // tried to get rid of the lines
-        r.setFillPoints(true);
+        // ASSUMES no more than 7 DATASETS
+        switch (DATASETS) { // must only setup and add a renderer *if* a data set exists
+        case 7:
+	        XYSeriesRenderer w = new XYSeriesRenderer();
+	        w.setColor(Color.WHITE);
+	        w.setPointStyle(PointStyle.DIAMOND);
+	        w.setFillPoints(true);
+	        renderer.addSeriesRenderer(w);
+        case 6:
+	        XYSeriesRenderer m = new XYSeriesRenderer();
+	        m.setColor(Color.MAGENTA);
+	        m.setPointStyle(PointStyle.DIAMOND);
+	        m.setFillPoints(true);
+	        renderer.addSeriesRenderer(m);
+        case 5:
+	        XYSeriesRenderer c = new XYSeriesRenderer();
+	        c.setColor(Color.CYAN);
+	        c.setPointStyle(PointStyle.DIAMOND);
+	        c.setFillPoints(true);
+	        renderer.addSeriesRenderer(c);
+        case 4:
+	        XYSeriesRenderer y = new XYSeriesRenderer();
+	        y.setColor(Color.YELLOW);
+	        y.setPointStyle(PointStyle.DIAMOND);
+	        y.setFillPoints(true);
+	        renderer.addSeriesRenderer(y);
+        case 3:
+	        XYSeriesRenderer b = new XYSeriesRenderer();
+	        b.setColor(Color.BLUE);
+	        b.setPointStyle(PointStyle.DIAMOND);
+	        b.setFillPoints(true);
+	        renderer.addSeriesRenderer(b);
+        case 2:
+	        XYSeriesRenderer r = new XYSeriesRenderer();
+	        r.setColor(Color.RED);
+	        r.setPointStyle(PointStyle.SQUARE);
+	        r.setFillPoints(true);
+	        renderer.addSeriesRenderer(r);
+        case 1:
+            XYSeriesRenderer g = new XYSeriesRenderer();
+            g.setColor(Color.GREEN);
+            g.setPointStyle(PointStyle.TRIANGLE);
+            g.setLineWidth((float) 0.0); // tried to get rid of the lines
+            g.setFillPoints(true);
+            renderer.addSeriesRenderer(g);
+        }
         // prepare renderer
-        renderer.addSeriesRenderer(r);
         renderer.setLabelsColor(Color.LTGRAY);
         renderer.setLabelsTextSize(10);
         renderer.setAxesColor(Color.DKGRAY);
@@ -144,7 +199,7 @@ public class chart extends Activity {
         renderer.setYAxisMin(0.0);
         renderer.setYAxisMax(24.0);
         renderer.setLegendTextSize(14);
-        renderer.setDisplayChartValues(true); // text on plotted values
+        renderer.setDisplayChartValues(false); // text on plotted values
         renderer.setShowGrid(true);
         //Log.i(TAG, "label text name " + renderer.getTextTypefaceName());
         //Log.i(TAG, "label text style " + renderer.getTextTypefaceStyle());
