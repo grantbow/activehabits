@@ -20,6 +20,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.res.Resources;
 import android.database.Cursor;
+import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.location.Location;
 import android.location.LocationManager;
@@ -95,6 +96,9 @@ public class mark extends Activity implements OnClickListener {
         logEventButton.setTypeface(null, Typeface.BOLD);
         logEventButton.setOnClickListener((OnClickListener) this);
         logEventButton.setHeight(buttonHeight);
+        logEventButton.setTextColor(0xFFFFFFFF); // text color
+        logEventButton.getBackground().setColorFilter(0x33FFFFFF, PorterDuff.Mode.MULTIPLY); // background color
+            // use 0xFFFFFFFF for default behavior
         registerForContextMenu(logEventButton);
         
         final CharSequence setTo = logEventButton.getText();
@@ -191,6 +195,8 @@ public class mark extends Activity implements OnClickListener {
         newButton.setFocusable(true);
         newButton.setOnClickListener((OnClickListener) this);
         newButton.setHeight(newButtonHeight);
+        newButton.setTextColor(0xFFFFFFFF); // text color
+        newButton.getBackground().setColorFilter(0x33FFFFFF, PorterDuff.Mode.MULTIPLY); // background color
         registerForContextMenu(newButton);
         View logEventButton = findViewById(R.id.log_event_button);
         ((ViewGroup) logEventButton.getParent()).addView(newButton);
@@ -278,12 +284,14 @@ public class mark extends Activity implements OnClickListener {
         else
         	locString = loc.toString();
 
-        CharSequence buttonText = ((Button) v).getText();
+        String buttonText = (String) ((Button) v).getText();
 
-        Log.i(TAG, "buttonText: " + buttonText);
-        Log.i(TAG, "R.string.markaction: " + getString(R.string.markaction));
-        if (buttonText == ((CharSequence) getString(R.string.markaction))) { // special case
+        //Log.i(TAG, "buttonText: " + buttonText);
+        //Log.i(TAG, "R.string.markaction: " + getString(R.string.markaction));
+        //if (buttonText == ((CharSequence) getString(R.string.markaction))) {
+        if (buttonText.matches("To.name.this.actio.*")) { // TODO: special case
             // show dialog - rename before pressing a button, marking an action
+            Log.i(TAG, "buttonText MATCHED");
         	finish();
         }
         
@@ -444,6 +452,12 @@ public class mark extends Activity implements OnClickListener {
         case R.id.addaction:
         	addNewAction();
             return true;
+        case R.id.moveup:
+        	moveAction(theAction, "up");
+            return true;
+        case R.id.movedown:
+        	moveAction(theAction, "down");
+            return true;
         //case R.id.playlist: // done automatically
         case R.id.playlistclear:
         	/* set pl to null */
@@ -585,18 +599,52 @@ public class mark extends Activity implements OnClickListener {
         for (i = 0; i < total; ++i) {
         	s = bar.next();
             if ( ! (s == null) ) {
-                Log.i(TAG, "s " + s);
+                //Log.i(TAG, "s " + s);
             	if ( s.matches(".*pl") ) {
-                    Log.i(TAG, "s matched");
+                    //Log.i(TAG, "s matched");
             	    totalPl = totalPl+1;
                 }
             }
         }
-        Log.i(TAG, "sizeWithoutPl" + " total " + total + ", totalPl " + totalPl);
+        //Log.i(TAG, "sizeWithoutPl" + " total " + total + ", totalPl " + totalPl);
         if ((total - totalPl) == 0) {
         	return 1;
         } else {
             return ( total - totalPl );
         }
+    }
+    private int moveAction(CharSequence theAction, CharSequence direction) {
+        SharedPreferences myMgrPrefs = PreferenceManager
+            .getDefaultSharedPreferences(getBaseContext());
+        int len = sizeWithoutPl(myMgrPrefs);
+	    // assume string of exactly "actionX", X<10
+	    int begin = Integer.parseInt(theAction.subSequence(6, 7).toString());
+        if (  ( (begin == len) && (direction == "up") ) || ( (begin == 1) && (direction == "down") ) ) {
+            // impossible, TODO: dialog to notify of illegal action
+        	return 1;
+        }
+	    //Log.i(TAG, "remove " + oldAction + ", move from " + begin + " to len " + len);
+        //Log.i(TAG, "mark myMgrPrefs before: " + myMgrPrefs.getAll().toString() );
+	    String tempAction = null;
+	    // String tempPlaylist = null; // TODO: move playlists too
+	    Editor e = myMgrPrefs.edit();
+        if (direction == "up") { // list is top to bottom
+        	tempAction = myMgrPrefs.getString("action" + (begin-1), "error");
+            e.putString("action" + (begin-1), myMgrPrefs.getString("action" + (begin), "error"));
+            e.putString("action" + (begin), tempAction);
+        } else { // ASSUME direction == "down"
+        	// increment
+        	tempAction = myMgrPrefs.getString("action" + (begin+1), "error");
+            e.putString("action" + (begin+1), myMgrPrefs.getString("action" + (begin), "error"));
+            e.putString("action" + (begin), tempAction);            
+        }
+        //e.remove("action"+(len-1)+"pl");
+        e.commit();
+        //Log.i(TAG, "mark myMgrPrefs  after: " + myMgrPrefs.getAll().toString());
+
+        // redraw
+        Intent myRemovePrefIntent = new Intent(getBaseContext(), mark.class);
+        startActivity(myRemovePrefIntent);
+        return 1;
     }
 };

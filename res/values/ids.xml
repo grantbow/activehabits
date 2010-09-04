@@ -16,4 +16,6 @@
     <item type="id" name="playlistclear" />
     <item type="id" name="playlistselected" />
     <item type="id" name="lastactionpl" />
+    <item type="id" name="moveup" />
+    <item type="id" name="movedown" />
 </resources>

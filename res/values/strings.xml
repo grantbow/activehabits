@@ -31,4 +31,6 @@
     <string name="playlistchange">Change Playlist</string>
     <string name="playlistprompt">Choose a playlist for this action</string>
     <string name="playlistclear"> - no playlist - </string>
+    <string name="moveup">Move Up</string>
+    <string name="movedown">Move Down</string>
 </resources>
