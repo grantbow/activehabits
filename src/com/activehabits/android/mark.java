@@ -250,10 +250,10 @@ public class mark extends Activity implements OnClickListener {
             Intent myAboutIntent = new Intent(this,about.class);
             startActivity(myAboutIntent);
             return true;
-        case R.id.quit: {
-            finish();
-            return true;
-        }
+//        case R.id.quit: {
+//            finish();
+//            return true;
+//        }
         default:
             return super.onOptionsItemSelected(item);
         }

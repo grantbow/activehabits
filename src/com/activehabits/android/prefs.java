@@ -207,7 +207,7 @@ public class prefs extends PreferenceActivity {
         menu.removeItem(R.id.mark);  // disable mark  item
         menu.removeItem(R.id.chart); // disable chart item
 //      menu.removeItem(R.id.prefs); // we are in prefs so disable prefs item
-        menu.removeItem(R.id.quit); // disable quit item
+//      menu.removeItem(R.id.quit); // disable quit item
         if ( menu.findItem(R.id.removeaction) == null ) {
             // want to change prefs context menu order
             Log.i(TAG, "prefs order: " + menu.findItem(R.id.about).getOrder());

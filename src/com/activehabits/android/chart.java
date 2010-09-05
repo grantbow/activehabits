@@ -243,10 +243,10 @@ public class chart extends Activity {
             Intent myAboutIntent = new Intent(this,about.class);
             startActivity(myAboutIntent);
             return true;
-        case R.id.quit: {
-            finish();
-            return true;
-        }
+//        case R.id.quit: {
+//            finish();
+//            return true;
+//        }
         default:
             return super.onOptionsItemSelected(item);
         }
