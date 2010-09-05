@@ -26,7 +26,7 @@
     <string name="renameprompt">Enter the new name:</string>
     <string name="removetitle">Remove Action</string>
     <string name="removeprompt">Are you sure you want to remove this action?</string>
-    <string name="description">\n    Choosing any action repeatedly can form a habit.\n\nGetting Started: To rename a button, hold your finger down and type in a meaningful name.  Tap the action\'s button to mark/record it.\n\n    We recommend using TxtPad Lite (no affiliation) to view or edit the ActiveHabits.txt file on your SD card.\n\n    The software that became ActiveHabits was originally used to mark \'wake up\' and \'go to bed\' habits.  We look forward to hearing how you use ActiveHabits.\n\nThis activity was crafted by http://activehabits.com\n</string>
+    <string name="description">\n\n\n\n    Choosing any action repeatedly can form a habit.\n\nGetting Started: To rename a button/action, hold your finger down on it and select Rename.  Click the button to mark/record the date &amp; location when clicked.\n\n    Data is stored as ActiveHabits.txt on your SD card. Your menu key offers a chart of your data.\n\n    The software that became ActiveHabits was originally used to mark \'wake up\' and \'go to bed\' actions, a sleep habit.  We eagerly look forward to hearing how you use ActiveHabits.\n\nThis activity was crafted by http://activehabits.com\n</string>
     <string name="playlist">Playlist</string>
     <string name="playlistchange">Change Playlist</string>
     <string name="playlistprompt">Choose a playlist for this action</string>
