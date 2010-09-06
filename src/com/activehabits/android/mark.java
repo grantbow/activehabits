@@ -289,11 +289,12 @@ public class mark extends Activity implements OnClickListener {
         //Log.i(TAG, "buttonText: " + buttonText);
         //Log.i(TAG, "R.string.markaction: " + getString(R.string.markaction));
         //if (buttonText == ((CharSequence) getString(R.string.markaction))) {
-        if (buttonText.matches("To.name.this.actio.*")) { // TODO: special case
-            // show dialog - rename before pressing a button, marking an action
-            Log.i(TAG, "buttonText MATCHED");
-        	finish();
+        if (buttonText.matches(getString(R.string.markaction))) {
+            // TODO: dialog - rename before pressing a button, marking an action
+            //Log.i(TAG, "buttonText MATCHED");
+        	return;
         }
+        //Log.i(TAG, "recorded bad data?");
         
         long presentTime = (rightnow.getTimeInMillis() / 1000);
 
