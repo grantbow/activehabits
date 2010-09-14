@@ -290,7 +290,7 @@ public class mark extends Activity implements OnClickListener {
         //Log.i(TAG, "R.string.markaction: " + getString(R.string.markaction));
         //if (buttonText == ((CharSequence) getString(R.string.markaction))) {
         if (buttonText.matches(getString(R.string.markaction))) {
-            // TODO: dialog - rename before pressing a button, marking an action
+            // TODO: *** dialog - rename before pressing a button, marking an action
             //Log.i(TAG, "buttonText MATCHED");
         	return;
         }
@@ -488,10 +488,9 @@ public class mark extends Activity implements OnClickListener {
         case R.layout.rename: //renameDialogInt: // from Context Item
         	LayoutInflater factory = LayoutInflater.from(mark.this);
         	textEntryView = factory.inflate(R.layout.rename, null);
-        	
+
         	/* return the constructed AlertDialog */
             // TODO: can enter be intercepted during dialog text entry?
-        	// TODO: change text entry field default value
         	return new AlertDialog.Builder(mark.this)
             .setTitle(R.string.renametitle) // add text of action
             .setView(textEntryView)
@@ -581,12 +580,15 @@ public class mark extends Activity implements OnClickListener {
         switch(id) {
         case R.layout.rename: //renameDialogInt: // from Context Item
         	// prepare default text of dialog box with button name
-        	//Resources ress = textEntryView.getResources();
-        	//Log.i(TAG, "res current button name " + ((Button)contextMenuItem).getText() ); // shows new data for R.id.renametext
+        	// if it is not the default button name
             View y = d.findViewById(R.id.renametext);
-            //Log.i(TAG, "res y " + y.toString());
-            ((TextView) y).setText(((Button)contextMenuItem).getText());
-            //Log.i(TAG, "changed");
+    		if ( ! ((Button)contextMenuItem).getText().toString().equals(getString(R.string.markaction)) ) {
+        	    ((TextView) y).setText(((Button)contextMenuItem).getText());
+        	    // TODO: set cursor to end, highlight as well?
+            //    Log.i(TAG, "CHANGED"); 
+            //} else {
+        	//	Log.i(TAG, "UNCHANGED");
+            }
         }
     }
     

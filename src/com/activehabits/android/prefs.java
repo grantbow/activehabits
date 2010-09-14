@@ -150,10 +150,10 @@ public class prefs extends PreferenceActivity {
 //        SharedPreferences myMgrPrefs = getPreferences(R.id.prefs);
         int len = myMgrPrefs.getAll().size()-1; // 0 based
         if (len == 0) {
-            // TODO: remove action - inform can't remove last item
+            // oldTODO: remove action - inform can't remove last item
             return;
         }
-        // TODO: remove action confirmation dialog box
+        // oldTODO: remove action confirmation dialog box
 
         // remove from prefs
         // Map<String, ?> bar = myMgrPrefs.getAll();

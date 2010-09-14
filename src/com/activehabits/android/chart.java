@@ -5,9 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Stack;
 
 import android.app.Activity;
@@ -111,7 +109,7 @@ public class chart extends Activity {
         // X range varies with start and end times - TODO: add X range buffers
         // Y chart values are hours from eventHour[0] to eventHour[l]
         // Y range is 0 - 24 hours in the day TODO: chart from TOP to BOTTOM like a Calendar.
-        Stack eventList = new Stack<String>(); // eventList are unique values in eventName
+        Stack<String> eventList = new Stack<String>(); // eventList are unique values in eventName
         for (int k = 0; k < l; k++) {
             if ( ! eventList.contains(eventName[k]) ) {
             	eventList.add(eventName[k]);
