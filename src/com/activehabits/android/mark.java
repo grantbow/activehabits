@@ -18,6 +18,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.PorterDuff;
@@ -59,8 +60,13 @@ public class mark extends Activity implements OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         // TODO: find onCreate / onResume bug
-        // TODO: handle keyboard opening and closing events - currently crashes sometimes
         // TODO: default rename field if "Default Action" - set to null
+    }
+    
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        // TODO: handle keyboard opening and closing events - currently crashes sometimes
+        super.onConfigurationChanged(newConfig);                
     }
 
     @Override
@@ -290,7 +296,7 @@ public class mark extends Activity implements OnClickListener {
         //Log.i(TAG, "R.string.markaction: " + getString(R.string.markaction));
         //if (buttonText == ((CharSequence) getString(R.string.markaction))) {
         if (buttonText.matches(getString(R.string.markaction))) {
-            // TODO: *** dialog - rename before pressing a button, marking an action
+            // TODO: \o/ dialog - rename before pressing a button, marking an action
             //Log.i(TAG, "buttonText MATCHED");
         	return;
         }
