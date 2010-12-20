@@ -1,9 +1,26 @@
           ActiveHabits
 
-Thanks for taking a look.  This is an Android application that
-allows for configuring and saving button clicks, then
-charting this to give yourself feedback.
+Thanks for taking a look.  ActiveHabits is an Android application
+that saves button clicks, then charts the clicks to provide
+visual feedback.
 
-While my original use case is for tracking personal habits, any
-activity you care about could be tracked.
+The website is http://www.activehabits.com
+
+My original idea is to track my own personal habits, yet the
+application is flexible enough to track any activity
+you care about.
+
+I look forward to hearing how people use ActiveHabits.
+
+This implementation could be used in many ways but I will
+first be supporting making this code even better for the
+original intended use.
+
+My next big idea for ActiveHabits is a dialog box to collect
+data when buttons are pressed.  I welcome other people
+exploring other intended uses.  If you are interested in
+seeing this or other ideas implemented and can provide
+some resources please contact me.
+
+grantbow@activehabits.com
 
