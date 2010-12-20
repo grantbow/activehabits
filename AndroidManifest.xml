@@ -5,7 +5,7 @@
       android:versionName="1.0 beta 201008">
 <!--    <uses-sdk android:minSdkVersion="3"
       android:targetSdkVersion="3" /> -->
-    <application android:icon="@drawable/icon" android:label="@string/app_name">
+    <application android:icon="@drawable/logo4e" android:label="@string/app_name">
         <activity android:name=".mark"
                   android:label="@string/app_name"
                   android:launchMode="singleInstance"

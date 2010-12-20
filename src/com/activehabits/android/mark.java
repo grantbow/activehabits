@@ -161,29 +161,28 @@ public class mark extends Activity implements OnClickListener {
 
     	// begin work
 
-    	if (mExternalStorageAvailable) {
+    	if (mExternalStorageAvailable & mExternalStorageWriteable ){
     		// getExternalStorageDirectory()
-    		// check if f1le exists
+    		// check if file exists
     		//read in last event from log
     		try {
     			File root = Environment.getExternalStorageDirectory();
     			Resources res = getResources();
     			String sFileName = res.getString(R.string.log_event_filename); //String sFileName = "activehabits.txt";
     			File gpxfile = new File(root,sFileName);
-    			//if gpxfile.exists()
-    			writer = new FileWriter(gpxfile, true); // appends
-    			//else
+    			if (gpxfile.exists())
+    				writer = new FileWriter(gpxfile, true); // appends
+    			else
+    				writer = new FileWriter(gpxfile, false); // doesn't exist so overwrite a new file
+    			    // I hope this fixes the first click new user crash bug
     		}
     		catch(IOException e) {
     			e.printStackTrace();
     		}
-    	} else  { // file doesn't exist - needs testing but works OK for now
-    		if (mExternalStorageWriteable) {
-    			// create log & notify user
-    		} else {
-    			// notify user no storage and no log && exit
-    		}
-    	  }
+    		// needs testing
+    			// create log && notify user new file was created
+    	} // else { // external storage is either not available or not writeable - trouble
+		// notify user of no writeable storage and no log && exit
     }
 
     private void createNewButton(String newAction, String newActionString, Integer newButtonHeight) {
