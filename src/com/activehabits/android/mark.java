@@ -289,7 +289,7 @@ public class mark extends Activity implements OnClickListener {
         else
         	locString = loc.toString();
 
-        String buttonText = (String) ((Button) v).getText();
+        String buttonText = ((Button) v).getText().toString();
 
         //Log.i(TAG, "buttonText: " + buttonText);
         //Log.i(TAG, "R.string.markaction: " + getString(R.string.markaction));
