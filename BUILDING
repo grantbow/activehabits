@@ -1,0 +1,8 @@
+
+The Android Development Kit recommends the use of Eclipse
+to develop applications. I have added a .project file to the
+git repository at the top level.
+
+An alternative way of building the application is from
+some simple commands.
+
