@@ -20,11 +20,10 @@ public class splash extends Activity implements OnClickListener {
         v.setOnClickListener(this);
         v = (View)findViewById(R.id.ButtonSplashOK);
         v.setOnClickListener(this);
-        //v.setOnLongClickListener(this);
     }
     
     public void onClick(View v) {
-      // finish when the button is clicked
+      // finish when anything is clicked
         finish();
     }
 

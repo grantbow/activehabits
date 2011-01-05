@@ -52,7 +52,7 @@ public class mark extends Activity implements OnClickListener {
     private static int paddingValue = 7; // * 10 pixels for calculating button sizes
     private static int splashed = 0;
     private View contextMenuItem; // button long pressed for context menu
-    private View textEntryView;   // TextEntry to update with default value of contextMenuItem
+    private View textEntryView;   // TextEntry to update with default value of contextMenuItem for renaming
 
     /** Called when the activity is first created. */
     @Override
@@ -65,7 +65,6 @@ public class mark extends Activity implements OnClickListener {
     
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
-        // TODO: handle keyboard opening and closing events - currently crashes sometimes
         super.onConfigurationChanged(newConfig);                
     }
 
@@ -118,6 +117,7 @@ public class mark extends Activity implements OnClickListener {
         	//     this is first run or help is needed so show splash
         	Intent mySplashIntent = new Intent(this,splash.class);
         	startActivityForResult(mySplashIntent,1);
+        	// TODO: review splash vs. about activity use
         }
 
         // add more buttons if they exist
@@ -232,7 +232,6 @@ public class mark extends Activity implements OnClickListener {
     public boolean onPrepareOptionsMenu(Menu menu) { // bottom menu
         super.onPrepareOptionsMenu(menu);
         menu.removeItem(R.id.mark); // we are in mark so disable mark item
-        menu.removeItem(R.id.addaction); // streamlining?
         // is it possible to make menu 1 x 3 instead of 2x2?
         return true;
     }
@@ -399,8 +398,15 @@ public class mark extends Activity implements OnClickListener {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.context_menu, menu);
         contextMenuItem = v; // stores button context menu called from // does not need to move to onPrepareContextMenu
+
+        // submenus can NOT BE NESTED but they can be next to each other
         
-        /* create and attach submenu */
+        /* attach and create edit submenu */
+        SubMenu editsub = menu.addSubMenu(R.string.editsubmenu);
+        editsub.clear();
+        editsub.add(3, R.id.renameaction, 3, R.string.renametitle);
+
+        /* attach and create playlist submenu */
         // TODO: submenu in correct ordering
         //MenuItem bar = (MenuItem) findViewById(R.id.removeaction);
         //int foo = bar.getOrder();
@@ -449,14 +455,12 @@ public class mark extends Activity implements OnClickListener {
         String theAction = (String) ((Button)contextMenuItem).getTag();
         // Handle item selection
         switch (item.getItemId()) {
+        /* case R.id.editsubmenu: handled automatically */
         case R.id.renameaction:
-        	showDialog(R.layout.rename);
+            showDialog(R.layout.rename);
             return true;
         case R.id.removeaction:
             showDialog(R.layout.remove);
-            return true;
-        case R.id.addaction:
-        	addNewAction();
             return true;
         case R.id.moveup:
         	moveAction(theAction, "up");
@@ -585,8 +589,8 @@ public class mark extends Activity implements OnClickListener {
         switch(id) {
         case R.layout.rename: //renameDialogInt: // from Context Item
         	// prepare default text of dialog box with button name
-        	// if it is not the default button name
             View y = d.findViewById(R.id.renametext);
+        	// check for default button name
     		if ( ! ((Button)contextMenuItem).getText().toString().equals(getString(R.string.markaction)) ) {
         	    ((TextView) y).setText(((Button)contextMenuItem).getText());
         	    // TODO: set cursor to end, highlight as well?
@@ -598,6 +602,7 @@ public class mark extends Activity implements OnClickListener {
     }
     
     private int sizeWithoutPl(SharedPreferences myMgrPrefs) {
+    	// # of actions without playlist in the shared preferences
     	int total = myMgrPrefs.getAll().size();
         Set<String> baz = myMgrPrefs.getAll().keySet();
         Iterator<String> bar = baz.iterator();

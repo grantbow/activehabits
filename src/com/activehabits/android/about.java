@@ -20,11 +20,10 @@ public class about extends Activity implements OnClickListener {
         v.setOnClickListener(this);
         v = (View)findViewById(R.id.ButtonAboutOK);
         v.setOnClickListener(this);
-        //v.setOnLongClickListener(this);
     }
     
     public void onClick(View v) {
-      // finish when the button is clicked
+      // finish when the anything is clicked
         finish();
     }
 

@@ -8,7 +8,7 @@
     <string name="chart">Chart All</string>
     <string name="social">Social</string>
     <string name="prefs">Preferences</string>
-    <string name="about">About</string> <!-- TODO: about string -->
+    <string name="about">About</string>
     <string name="close">Close</string>
     <string name="copyrecent">Copy Recent</string>
     <string name="renameaction">Rename</string>
@@ -26,11 +26,13 @@
     <string name="renameprompt">Enter the new name:</string>
     <string name="removetitle">Remove Action</string>
     <string name="removeprompt">Are you sure you want to remove this action?</string>
-    <string name="description">\n\n\n\n    Choosing any action repeatedly can form a habit.\n\nGetting Started: To rename a button/action, hold your finger down on it and select Rename.  Click the button to mark/record the date &amp; location when clicked.\n\n    Data is stored as ActiveHabits.txt on your SD card. Your menu key offers a chart of your data.\n\n    The software that became ActiveHabits was originally used to mark \'wake up\' and \'go to bed\' actions, a sleep habit.  We eagerly look forward to hearing how you use ActiveHabits.\n\nThis activity was crafted by http://activehabits.com\n</string>
+    <string name="description">\n\n\n\n    Marking any action repeatedly can form a habit.\n\nGetting Started: Rename the default action.  Click the button to mark/record the date &amp; location when marked.\n\n    Data is stored as ActiveHabits.txt on your SD card.\n\n    The software that became ActiveHabits was originally used to mark \'wake up\' and \'go to bed\' actions, a sleep habit.  We eagerly look forward to hearing how you use ActiveHabits.\n\nThis activity was crafted by http://activehabits.com\n</string>
     <string name="playlist">Playlist</string>
-    <string name="playlistchange">Change Playlist</string>
+    <string name="playlistchange">Playlist...</string>
     <string name="playlistprompt">Choose a playlist for this action</string>
     <string name="playlistclear"> - no playlist - </string>
     <string name="moveup">Move Up</string>
     <string name="movedown">Move Down</string>
+    <string name="editsubmenu">Edit...</string>
+    <string name="editaction">Edit Action</string>
 </resources>

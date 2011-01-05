@@ -6,17 +6,20 @@
     <item android:id="@+id/movedown"
           android:title="@string/movedown"
           android:orderInCategory="2" />
-    <item android:id="@+id/renameaction"
+<!-- <item android:id="@+id/editsubmenu"
+          android:title="@string/editsubmenu"
+          android:orderInCategory="3" />
+     <item android:id="@+id/renameaction"
           android:title="@string/renameaction" 
           android:orderInCategory="3" />
-    <item android:id="@+id/addaction"
+     <item android:id="@+id/addaction"
           android:title="@string/addaction"
           android:orderInCategory="4"/>
-<!-- <item android:id="@+id/history"
+     <item android:id="@+id/history"
           android:title="@string/history" /> unmark copyrecent, change date/time, share -->
     <item android:id="@+id/removeaction"
           android:title="@string/removeaction"
-          android:orderInCategory="5" />
+          android:orderInCategory="3" />
 <!-- <item android:id="@+id/playlist"
           android:title="@string/playlistchange" /> -->
 </menu>
