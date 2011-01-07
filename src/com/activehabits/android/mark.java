@@ -21,13 +21,15 @@ import android.content.SharedPreferences.Editor;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Environment;
-import android.preference.PreferenceManager;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -57,7 +59,9 @@ public class mark extends Activity implements OnClickListener, RadioGroup.OnChec
     protected static String currentSet = "activehabits.txt"; // current set 
     protected static int radioSet = 0; // radio selection of set 
     private View contextMenuItem; // button long pressed for context menu
-    private View textEntryView;   // TextEntry to update with default value of contextMenuItem for renaming
+    private View textEntryView;   // TextEntry for renaming
+    private ActiveHabitsName ahn;
+    private String sSetName;
 
     /** Called when the activity is first created. */
     @Override
@@ -65,7 +69,6 @@ public class mark extends Activity implements OnClickListener, RadioGroup.OnChec
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         // TODO: find onCreate / onResume bug
-        // TODO: default rename field if "Default Action" - set to null
     }
     
     @Override
@@ -76,9 +79,15 @@ public class mark extends Activity implements OnClickListener, RadioGroup.OnChec
     @Override
     public void onResume() {
         super.onResume();
+
+        // get preference name
+		Resources res = getResources();
+		String sFileName = res.getString(R.string.log_event_filename); //String sFileName = "activehabits.txt";
+        this.ahn = new ActiveHabitsName(this, sFileName);
+        sSetName = ahn.get();
+        
         // load default preferences
-        SharedPreferences myMgrPrefs = PreferenceManager
-            .getDefaultSharedPreferences(this);
+        SharedPreferences myMgrPrefs = getSharedPreferences(sSetName, 0);
         setContentView(R.layout.main);
 
         // prepare to add more buttons from myMgrPrefs if they exist
@@ -159,8 +168,8 @@ public class mark extends Activity implements OnClickListener, RadioGroup.OnChec
     	    mExternalStorageAvailable = true;
     	    mExternalStorageWriteable = false;
     	} else {
-    	    // Something else is wrong. It may be one of many other states, but all we need
-    	    //  to know is we can neither read nor write
+    	    // Something else is wrong. It may be one of many other states,
+    		// however all we need to know is we can neither read nor write
     	    mExternalStorageAvailable = mExternalStorageWriteable = false;
     	}
 
@@ -172,8 +181,16 @@ public class mark extends Activity implements OnClickListener, RadioGroup.OnChec
     		//read in last event from log
     		try {
     			File root = Environment.getExternalStorageDirectory();
-    			Resources res = getResources();
-    			String sFileName = res.getString(R.string.log_event_filename); //String sFileName = "activehabits.txt";
+    			// Note: defaults to root of external storage.
+    			//       Spec says to use /Android/data/com.activehabits.android/files/
+    			//       I see no reason to subject users to something so cumbersome.
+    			//       Alternative spec says use one of {Music,Podcasts,Ringtones,
+    			//       Alarms,Notifications,Pictures,Movies,Download} but our file
+    			//       doesn't seem to fit any of them.
+    			// TODO: use sqlite to store a single table with a
+    			//       single row and single column
+    			//       for the current filename
+    			//       that defaults to value R.string.log_event_filename
     			File gpxfile = new File(root,sFileName);
     			if (gpxfile.exists())
     				writer = new FileWriter(gpxfile, true); // appends
@@ -216,6 +233,8 @@ public class mark extends Activity implements OnClickListener, RadioGroup.OnChec
     
     @Override
     public void onPause() {
+    	// moved super to the top - hopefully this fixes the \n bug
+        super.onPause();
     	try {
     	writer.flush();
     	writer.close();
@@ -223,7 +242,6 @@ public class mark extends Activity implements OnClickListener, RadioGroup.OnChec
     	catch(IOException e) {
     		e.printStackTrace();
     	}
-        super.onPause();
     }
 
     @Override
@@ -313,7 +331,6 @@ public class mark extends Activity implements OnClickListener, RadioGroup.OnChec
         //Log.i(TAG, "recorded bad data?");
         
         long presentTime = (rightnow.getTimeInMillis() / 1000);
-
         try {
         	if (b < 10) {
         		Log.i(TAG, "mark write: "
@@ -344,8 +361,7 @@ public class mark extends Activity implements OnClickListener, RadioGroup.OnChec
         	e.printStackTrace();
         }
         // if a playlist is set, play it
-        SharedPreferences myMgrPrefs = PreferenceManager
-            .getDefaultSharedPreferences(this);
+        SharedPreferences myMgrPrefs = getSharedPreferences(sSetName, 0);
         String playAction = (String)v.getTag();
         String pl = myMgrPrefs.getString( playAction + "pl", null);
         if ( ! ( pl == null) ) {
@@ -356,7 +372,16 @@ public class mark extends Activity implements OnClickListener, RadioGroup.OnChec
     	     intent.setFlags(0x10000000); // need to understand these 3 lines better
     	     //intent.putExtra(playlist, false);
     	    intent.putExtra("playlist", pl );
-            startActivity(intent);
+    	    final Intent fintent = intent; // for passing into postDelayed
+
+    	    // Sleep 2 seconds here - another fix for \n bug
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                public void run() {
+                    startActivity(fintent);
+                }
+            }, 2000);
+
             // Kendra Springer http://www.jamendo.com/en/artist/Kendra_Springer after login
     	    // test mp3    http://download31.jamendo.com/download/track/469312/mp32/24deaf7def/Hope.mp3
             // second link http://download29.jamendo.com/download/track/674453/mp32/ce8683423f/Hope.mp3
@@ -373,8 +398,7 @@ public class mark extends Activity implements OnClickListener, RadioGroup.OnChec
 	}
 
     private void addNewAction() {
-        SharedPreferences myMgrPrefs = PreferenceManager
-            .getDefaultSharedPreferences(this);
+        SharedPreferences myMgrPrefs = getSharedPreferences(sSetName,0);
 
         // add to shared preferences
         int len = sizeWithoutPl(myMgrPrefs); // -1 for 0 based, + 1 for new value = size
@@ -463,8 +487,7 @@ public class mark extends Activity implements OnClickListener, RadioGroup.OnChec
     @Override
     public boolean onContextItemSelected(MenuItem item) {
     	// need these vars for playlistclear and playlistselected
-        SharedPreferences myMgrPrefs = PreferenceManager
-            .getDefaultSharedPreferences(this);
+        SharedPreferences myMgrPrefs = getSharedPreferences(sSetName, 0);
         Editor e = myMgrPrefs.edit();
         String theAction = (String) ((Button)contextMenuItem).getTag();
         // Handle item selection
@@ -512,7 +535,7 @@ public class mark extends Activity implements OnClickListener, RadioGroup.OnChec
         case R.layout.rename: //renameDialogInt: // from Context Item
         	textEntryView = factory.inflate(R.layout.rename, null);
 
-        	/* return the constructed AlertDialog */
+        	/* return the constructed rename AlertDialog */
             // TODO: can enter be intercepted during dialog text entry?
         	return new AlertDialog.Builder(mark.this)
             .setTitle(R.string.renametitle) // add text of action
@@ -528,8 +551,7 @@ public class mark extends Activity implements OnClickListener, RadioGroup.OnChec
                 	CharSequence newAction = (CharSequence) ((Button)contextMenuItem).getTag();
                 	//final CharSequence x = ((Button)contextMenuItem).getText();
                     //Log.i(TAG, "change " + newAction + " from " + x + " to " + ca );
-                    SharedPreferences myMgrPrefs = PreferenceManager
-                        .getDefaultSharedPreferences(getBaseContext());
+                    SharedPreferences myMgrPrefs = getSharedPreferences(sSetName, 0);
                     //Log.i(TAG, "mark myMgrPrefs before: " + myMgrPrefs.getAll().toString() );
                     Editor e = myMgrPrefs.edit();
                     e.putString( newAction.toString(), ca.toString());
@@ -551,7 +573,7 @@ public class mark extends Activity implements OnClickListener, RadioGroup.OnChec
         case R.layout.remove:
         	View confirmView = factory.inflate(R.layout.remove, null);
         	
-        	// confirm remove dialog
+        	// confirm remove AlertDialog
         	return new AlertDialog.Builder(mark.this)
             .setTitle(R.string.removetitle)
             .setView(confirmView)
@@ -560,8 +582,7 @@ public class mark extends Activity implements OnClickListener, RadioGroup.OnChec
                     /* User clicked OK */
                     /* change preferences by moving all down to fill the gap */
                 	CharSequence oldAction = (CharSequence) ((Button)contextMenuItem).getTag();
-                    SharedPreferences myMgrPrefs = PreferenceManager
-                        .getDefaultSharedPreferences(getBaseContext());
+                    SharedPreferences myMgrPrefs = getSharedPreferences(sSetName, 0);
                     int len = sizeWithoutPl(myMgrPrefs);
                 	// assume string of exactly "actionX", X<10
                 	int begin = Integer.parseInt(oldAction.subSequence(6, 7).toString());
@@ -594,7 +615,7 @@ public class mark extends Activity implements OnClickListener, RadioGroup.OnChec
         case R.id.chooseset:
         	View chooseSetView = factory.inflate(R.layout.choose_set, null);
 
-        	// choose set dialog
+        	// choose set AlertDialog
         	AlertDialog chooseme = new AlertDialog.Builder(mark.this)
             .setTitle(R.string.setmenutitle)
             .setView(chooseSetView)
@@ -602,6 +623,10 @@ public class mark extends Activity implements OnClickListener, RadioGroup.OnChec
                 public void onClick(DialogInterface dialog, int whichButton) {
                     /* User clicked OK */
                 	Log.i(TAG, "Clicked OK");
+                	// If Clear, clear
+                	// If New, give dialog to get the new name
+                	// If selected, read in new set
+                	//     and save new set name
                 }
             })
             .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -647,9 +672,13 @@ public class mark extends Activity implements OnClickListener, RadioGroup.OnChec
     @Override
     public void onCheckedChanged(RadioGroup arg0, int checkedId) {
     	radioSet = checkedId; // refresh global
-        //RadioButton rb = (RadioButton) arg0.getChildAt(checkedId);
+        RadioButton rb = (RadioButton) arg0.findViewById(checkedId);
         // Perform action on the Set clicked // rb.getId() + ", " + rb.getText()
-        Log.i(TAG, "Clicked radio button: " + checkedId);
+        Log.i(TAG, "Clicked radio button: " + rb.getText());
+        // Only act on a Set name
+        // Check if file does not exists
+            // modify displayed Set/file name (new)
+        // do nothing if it exists
     }
 
     @Override
@@ -672,12 +701,13 @@ public class mark extends Activity implements OnClickListener, RadioGroup.OnChec
     
     private int sizeWithoutPl(SharedPreferences myMgrPrefs) {
     	// # of actions without playlist in the shared preferences
-    	int total = myMgrPrefs.getAll().size();
+    	int total = myMgrPrefs.getAll().size(); // total   is size
         Set<String> baz = myMgrPrefs.getAll().keySet();
-        Iterator<String> bar = baz.iterator();
-        int totalPl = 0;
-        int i;
-        String s;
+                                                // baz     is set of keys
+        Iterator<String> bar = baz.iterator();  // bar     is loop variable
+        int totalPl = 0;                        // totalPl is counter of playlist keys
+        int i;                                  // i       is up counter
+        String s;                               // s       is string to be tested
         for (i = 0; i < total; ++i) {
         	s = bar.next();
             if ( ! (s == null) ) {
@@ -690,14 +720,14 @@ public class mark extends Activity implements OnClickListener, RadioGroup.OnChec
         }
         //Log.i(TAG, "sizeWithoutPl" + " total " + total + ", totalPl " + totalPl);
         if ((total - totalPl) == 0) {
-        	return 1;
+        	return 1; // 0,0 or all must all be playlists
         } else {
             return ( total - totalPl );
         }
     }
+    
     private int moveAction(CharSequence theAction, CharSequence direction) {
-        SharedPreferences myMgrPrefs = PreferenceManager
-            .getDefaultSharedPreferences(getBaseContext());
+        SharedPreferences myMgrPrefs = getSharedPreferences(sSetName, 0);
         int len = sizeWithoutPl(myMgrPrefs);
 	    // assume string of exactly "actionX", X<10
 	    int begin = Integer.parseInt(theAction.subSequence(6, 7).toString());
@@ -730,4 +760,45 @@ public class mark extends Activity implements OnClickListener, RadioGroup.OnChec
         return 1;
     }
     
+    private static class ActiveHabitsName extends SQLiteOpenHelper {
+    	private static final String DATABASE_NAME = "activehabitsset.db";
+    	private static final int DATABASE_VERSION = 1;
+    	private static final String TABLE_NAME = "name";
+    	private SQLiteDatabase db;
+    	
+    	private static final String TABLE_CREATE =
+    		"CREATE TABLE " + TABLE_NAME + " (name TEXT PRIMARY KEY);";
+
+    	ActiveHabitsName(Context context) {
+    		super(context, DATABASE_NAME, null, DATABASE_VERSION);
+    	}
+    	
+    	ActiveHabitsName(Context context, String defaultName) {
+    		super(context, DATABASE_NAME, null, DATABASE_VERSION);
+    		//db.execSQL("SELECT * FROM " + TABLE_NAME);
+    		// if not key exists set to defaultName
+    	}
+
+    	@Override
+    	public void onCreate(SQLiteDatabase indb) {
+    		indb.execSQL(TABLE_CREATE);
+    		db = indb;
+    	}
+    	
+    	@Override
+    	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+    		db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
+    		onCreate(db);
+    	}
+    	
+    	public String get() {
+    		// return value
+    		return "activehabits.txt"; // temp
+        }
+
+    	public void put(String name) {
+    		// store value
+        }
+    }
+
 };

@@ -39,7 +39,7 @@
     <string name="editaction">Edit Action</string>
     <string name="setmenu">Set ...</string>
     <string name="setmenutitle">Select Set</string>
-    <string name="setdescription">Select a set of actions to load from file.</string>
+    <string name="setdescription">Select a set of actions to load from a file.</string>
     <string name="setadd">Add Set ...</string>
-    <string name="setclear">Clear Sets ...</string>
+    <string name="setclear">Clear All ...</string>
 </resources>
