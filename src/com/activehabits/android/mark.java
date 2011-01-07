@@ -44,12 +44,13 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
-public class mark extends Activity implements View.OnClickListener, RadioGroup.OnCheckedChangeListener {
-    private static final String TAG = "ActiveHabits.mark"; // for Log.i(TAG, ...);
+public class mark extends Activity implements OnClickListener, RadioGroup.OnCheckedChangeListener {
+    private static final String TAG = "AH.mark"; // for Log.i(TAG, ...);
     private static FileWriter writer;
     private static int paddingValue = 7; // * 10 pixels for calculating button sizes
     private static int splashed = 0;
@@ -614,24 +615,27 @@ public class mark extends Activity implements View.OnClickListener, RadioGroup.O
 
         	// dynamic soon, static for testing
 
-        	// Add buttons
-        	//RadioGroup myList = (RadioGroup) chooseSetView.findViewById(R.id.setlist);
-        	
-        	//myList.addView(activehabitsSet); // for static it's already added
+        	// Prepare to add buttons
+        	RadioGroup myList = (RadioGroup) chooseSetView.findViewById(R.id.setlist);
 
-        	// Needs a ClickListener for something to happen when the radio button is selected
-            final RadioButton activehabitsSet = (RadioButton) findViewById(R.id.ahSet);
-            //activehabitsSet.setOnClickListener(radio_listener); // exception
-        	//activehabitsSet.setOnClickListener(new OnClickListener() { // exception
-            //    public void onClick(View v) {
-            //        RadioButton rb = (RadioButton) v;
-            //        // Perform action on the Set clicked
-            //        Log.i(TAG, "Clicked radio button: " + rb.getId() + ", " + rb.getText());
-            //    }
-            //}
-            //);
-        	
+        	final LinearLayout.LayoutParams layoutParams = new RadioGroup.LayoutParams(
+                    RadioGroup.LayoutParams.WRAP_CONTENT,
+                    RadioGroup.LayoutParams.WRAP_CONTENT);
+
+        	// Add buttons
+        	RadioButton newSet = new RadioButton(this);
+        	newSet.setText(R.string.setadd);
+        	//Log.i(TAG, " id " + newSet.getId()); // auto assigned
+            myList.addView(newSet, 1, layoutParams);
+
+        	newSet = new RadioButton(this);
+        	newSet.setText(R.string.setclear);
+        	myList.addView(newSet, 2, layoutParams);
+
             // activate the radio button of the current set
+        	
+            // hook up the listener for when selection changes
+        	myList.setOnCheckedChangeListener(this);
         	
         	return chooseme;
 
@@ -642,10 +646,10 @@ public class mark extends Activity implements View.OnClickListener, RadioGroup.O
     
     @Override
     public void onCheckedChanged(RadioGroup arg0, int checkedId) {
-    	radioSet = checkedId;
-        RadioButton rb = (RadioButton) arg0.getChildAt(checkedId);
-        // Perform action on the Set clicked
-        Log.i(TAG, "Clicked radio button: " + rb.getId() + ", " + rb.getText());
+    	radioSet = checkedId; // refresh global
+        //RadioButton rb = (RadioButton) arg0.getChildAt(checkedId);
+        // Perform action on the Set clicked // rb.getId() + ", " + rb.getText()
+        Log.i(TAG, "Clicked radio button: " + checkedId);
     }
 
     @Override

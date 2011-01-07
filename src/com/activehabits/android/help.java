@@ -7,7 +7,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 
 public class help extends Activity implements OnClickListener {
-    private static final String TAG = "ActiveHabits.help";
+    private static final String TAG = "AH.help";
     
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

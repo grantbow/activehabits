@@ -18,7 +18,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 public class prefs extends PreferenceActivity {
-    private static final String TAG = "ActiveHabits.mark";
+    private static final String TAG = "AH.mark";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

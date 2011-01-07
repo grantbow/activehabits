@@ -6,7 +6,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 
 public class splash extends Activity implements OnClickListener {
-    //private static final String TAG = "ActiveHabits.mark";
+    //private static final String TAG = "AH.mark";
 	//private static OnClickListener mSplashListener;
     
     protected void onCreate(Bundle savedInstanceState) {

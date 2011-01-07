@@ -31,7 +31,7 @@ import org.achartengine.renderer.XYMultipleSeriesRenderer;
 import org.achartengine.renderer.XYSeriesRenderer;
 
 public class chart extends Activity {
-	private static final String TAG = "ActiveHabits.chart";
+	private static final String TAG = "AH.chart";
 	private static final Integer MAXEVENTS = 50; // fixed max # events String[] of 50 for now
 	private Integer DATASETS = 1;
 

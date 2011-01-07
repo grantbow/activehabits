@@ -35,9 +35,11 @@
     <string name="playlistclear"> - no playlist - </string>
     <string name="moveup">Move Up</string>
     <string name="movedown">Move Down</string>
-    <string name="editsubmenu">Edit...</string>
+    <string name="editsubmenu">Edit ...</string>
     <string name="editaction">Edit Action</string>
-    <string name="setmenu">Set...</string>
+    <string name="setmenu">Set ...</string>
     <string name="setmenutitle">Select Set</string>
     <string name="setdescription">Select a set of actions to load from file.</string>
+    <string name="setadd">Add Set ...</string>
+    <string name="setclear">Clear Sets ...</string>
 </resources>
