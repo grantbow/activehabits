@@ -21,6 +21,7 @@
         <activity android:name="org.achartengine.GraphicalActivity" android:label="Chart Actions"/>
         <activity android:name=".prefs" android:label="@string/prefs" />
         <activity android:name=".splash" android:label="@string/splash" />
+        <activity android:name=".help" android:label="@string/help" />
         <activity android:name=".about" android:label="@string/splash" />
 
     </application>

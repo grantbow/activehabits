@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:layout_gravity="center" >
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:layout_gravity="center" >
+    <!-- SurfaceLayout or FrameLayout -->
+
+    <ImageView
+        android:id="@+id/ImageView02"
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <!-- android:onClick=  -->
+    </ImageView>
+    <TextView
+        android:id="@+id/TextView02"
+        android:text="@string/help01"
+        android:layout_gravity="center"
+        android:clickable="true"
+        android:hapticFeedbackEnabled="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18sp" >
+        <!-- "@+id/TextView01" instead of text? -->
+    </TextView>
+    <Button
+        android:id="@+id/ButtonHelpOK"
+        android:text="@string/ok"
+        android:clickable="true"
+        android:hapticFeedbackEnabled="true"
+        android:longClickable="true"
+        android:layout_gravity="center"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+    </Button>
+</LinearLayout>
+</ScrollView>

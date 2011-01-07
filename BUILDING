@@ -1,8 +1,18 @@
 
 The Android Development Kit recommends the use of Eclipse
-to develop applications. I have added a .project file to the
-git repository at the top level.
+to develop applications. I have added some files to the
+git repository at the top level to support this. After
+much effort I am climbing the considerable learning curve
+that Eclipse requires for full configuration. It seems
+worth the effort for the logging and debugging features
+that are rather well integrated, though I still have to
+perform workarounds to keep things working making me
+believe that these development tools are not fully
+tested and debugged.
 
 An alternative way of building the application is from
-some simple commands.
+some commands using the command line as described:
+http://developer.android.com/guide/developing/tools/index.html
+and
+http://developer.android.com/guide/developing/other-ide.html
 

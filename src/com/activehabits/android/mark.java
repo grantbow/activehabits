@@ -44,13 +44,17 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
-public class mark extends Activity implements OnClickListener {
+public class mark extends Activity implements View.OnClickListener, RadioGroup.OnCheckedChangeListener {
     private static final String TAG = "ActiveHabits.mark"; // for Log.i(TAG, ...);
     private static FileWriter writer;
     private static int paddingValue = 7; // * 10 pixels for calculating button sizes
     private static int splashed = 0;
+    protected static String currentSet = "activehabits.txt"; // current set 
+    protected static int radioSet = 0; // radio selection of set 
     private View contextMenuItem; // button long pressed for context menu
     private View textEntryView;   // TextEntry to update with default value of contextMenuItem for renaming
 
@@ -240,6 +244,12 @@ public class mark extends Activity implements OnClickListener {
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
         switch (item.getItemId()) {
+        case R.id.addaction:
+        	addNewAction();
+            return true;
+        case R.id.setmenu:
+        	showDialog(R.id.chooseset);
+            return true;
         case R.id.chart:
         	Intent myChartIntent = new Intent(this,chart.class);
         	startActivity(myChartIntent);
@@ -247,8 +257,9 @@ public class mark extends Activity implements OnClickListener {
             return true;
 //      case R.id.social:
 //          return true;
-        case R.id.addaction:
-        	addNewAction();
+        case R.id.help:
+            Intent myHelpIntent = new Intent(this,help.class);
+            startActivity(myHelpIntent);
             return true;
         case R.id.about:
             Intent myAboutIntent = new Intent(this,about.class);
@@ -341,11 +352,13 @@ public class mark extends Activity implements OnClickListener {
     	    Intent intent = new Intent(Intent.ACTION_VIEW);
     	    intent.setComponent(new ComponentName("com.android.music","com.android.music.PlaylistBrowserActivity"));
     	    intent.setType(MediaStore.Audio.Playlists.CONTENT_TYPE);
-    	     intent.setFlags(0x10000000); // need to understand these 3 lines
+    	     intent.setFlags(0x10000000); // need to understand these 3 lines better
     	     //intent.putExtra(playlist, false);
     	    intent.putExtra("playlist", pl );
             startActivity(intent);
-    	    // test mp3 http://download29.jamendo.com/download/track/469312/mp32/24deaf7def/Hope.mp3	
+            // Kendra Springer http://www.jamendo.com/en/artist/Kendra_Springer after login
+    	    // test mp3    http://download31.jamendo.com/download/track/469312/mp32/24deaf7def/Hope.mp3
+            // second link http://download29.jamendo.com/download/track/674453/mp32/ce8683423f/Hope.mp3
         }
         
         /* store clicked item as history */
@@ -491,11 +504,11 @@ public class mark extends Activity implements OnClickListener {
 
     @Override
     protected Dialog onCreateDialog(int id) {
+    	LayoutInflater factory = LayoutInflater.from(mark.this);
     	//Dialog dialog;
         switch(id) {
 
         case R.layout.rename: //renameDialogInt: // from Context Item
-        	LayoutInflater factory = LayoutInflater.from(mark.this);
         	textEntryView = factory.inflate(R.layout.rename, null);
 
         	/* return the constructed AlertDialog */
@@ -535,9 +548,8 @@ public class mark extends Activity implements OnClickListener {
             .create();
 
         case R.layout.remove:
-        	LayoutInflater removeFactory = LayoutInflater.from(mark.this);
-        	View confirmView = removeFactory.inflate(R.layout.remove, null);
-
+        	View confirmView = factory.inflate(R.layout.remove, null);
+        	
         	// confirm remove dialog
         	return new AlertDialog.Builder(mark.this)
             .setTitle(R.string.removetitle)
@@ -578,9 +590,62 @@ public class mark extends Activity implements OnClickListener {
             //.setIcon(R.drawable.alert_dialog_icon)
             .create();
 
+        case R.id.chooseset:
+        	View chooseSetView = factory.inflate(R.layout.choose_set, null);
+
+        	// choose set dialog
+        	AlertDialog chooseme = new AlertDialog.Builder(mark.this)
+            .setTitle(R.string.setmenutitle)
+            .setView(chooseSetView)
+            .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    /* User clicked OK */
+                	Log.i(TAG, "Clicked OK");
+                }
+            })
+            .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    /* User clicked cancel so do nothing */
+                	Log.i(TAG, "Clicked cancel");
+                }
+            })
+            //.setIcon(R.drawable.alert_dialog_icon)
+            .create();
+
+        	// dynamic soon, static for testing
+
+        	// Add buttons
+        	//RadioGroup myList = (RadioGroup) chooseSetView.findViewById(R.id.setlist);
+        	
+        	//myList.addView(activehabitsSet); // for static it's already added
+
+        	// Needs a ClickListener for something to happen when the radio button is selected
+            final RadioButton activehabitsSet = (RadioButton) findViewById(R.id.ahSet);
+            //activehabitsSet.setOnClickListener(radio_listener); // exception
+        	//activehabitsSet.setOnClickListener(new OnClickListener() { // exception
+            //    public void onClick(View v) {
+            //        RadioButton rb = (RadioButton) v;
+            //        // Perform action on the Set clicked
+            //        Log.i(TAG, "Clicked radio button: " + rb.getId() + ", " + rb.getText());
+            //    }
+            //}
+            //);
+        	
+            // activate the radio button of the current set
+        	
+        	return chooseme;
+
         default:
             return null;
         }
+    }
+    
+    @Override
+    public void onCheckedChanged(RadioGroup arg0, int checkedId) {
+    	radioSet = checkedId;
+        RadioButton rb = (RadioButton) arg0.getChildAt(checkedId);
+        // Perform action on the Set clicked
+        Log.i(TAG, "Clicked radio button: " + rb.getId() + ", " + rb.getText());
     }
 
     @Override
@@ -660,4 +725,5 @@ public class mark extends Activity implements OnClickListener {
         startActivity(myRemovePrefIntent);
         return 1;
     }
+    
 };

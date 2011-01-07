@@ -5,13 +5,19 @@
 <!--<item type="id" name="button_ok" /> -->
     <item type="id" name="dialog_rename" />
     <item type="id" name="prefs" />
+    <item type="id" name="help" />
     <item type="id" name="addaction" />
     <item type="id" name="removeaction" />
     <item type="id" name="clearsplashed" />
     <item type="id" name="renameaction" />
     <item type="id" name="renametext" />
+    <item type="id" name="ImageView01" />
+    <item type="id" name="TextView01" />
     <item type="id" name="ButtonSplashOK" />
     <item type="id" name="ButtonAboutOK" />
+    <item type="id" name="ImageView02" />
+    <item type="id" name="TextView02" />
+    <item type="id" name="ButtonHelpOK" />
     <item type="id" name="playlist" />
     <item type="id" name="playlistlist" />
     <item type="id" name="playlistclear" />
@@ -20,4 +26,8 @@
     <item type="id" name="moveup" />
     <item type="id" name="movedown" />
     <item type="id" name="editsubmenu" />
+    <item type="id" name="setmenu" />
+    <item type="id" name="chooseset" />
+    <item type="id" name="setlist" />
+    <item type="id" name="ahSet" />
 </resources>
