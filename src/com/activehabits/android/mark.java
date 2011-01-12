@@ -53,7 +53,7 @@ import android.widget.TextView;
 
 public class mark extends Activity implements OnClickListener, RadioGroup.OnCheckedChangeListener {
     private static final String TAG = "AH.mark"; // for Log.i(TAG, ...);
-    private static FileWriter writer;
+    //private static FileWriter writer;
     private static int paddingValue = 7; // * 10 pixels for calculating button sizes
     private static int splashed = 0;
     protected static String currentSet = "activehabits.txt"; // current set 
@@ -155,56 +155,6 @@ public class mark extends Activity implements OnClickListener, RadioGroup.OnChec
 		catch(Exception e) {
 			e.printStackTrace();
 		}
-
-
-        boolean mExternalStorageAvailable = false;
-    	boolean mExternalStorageWriteable = false;
-    	String state = Environment.getExternalStorageState();
-    	if (Environment.MEDIA_MOUNTED.equals(state)) {
-    	    // We can read and write the media
-    	    mExternalStorageAvailable = mExternalStorageWriteable = true;
-    	} else if (Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
-    	    // We can only read the media
-    	    mExternalStorageAvailable = true;
-    	    mExternalStorageWriteable = false;
-    	} else {
-    	    // Something else is wrong. It may be one of many other states,
-    		// however all we need to know is we can neither read nor write
-    	    mExternalStorageAvailable = mExternalStorageWriteable = false;
-    	}
-
-    	// begin work
-
-    	if (mExternalStorageAvailable & mExternalStorageWriteable ){
-    		// getExternalStorageDirectory()
-    		// check if file exists
-    		//read in last event from log
-    		try {
-    			File root = Environment.getExternalStorageDirectory();
-    			// Note: defaults to root of external storage.
-    			//       Spec says to use /Android/data/com.activehabits.android/files/
-    			//       I see no reason to subject users to something so cumbersome.
-    			//       Alternative spec says use one of {Music,Podcasts,Ringtones,
-    			//       Alarms,Notifications,Pictures,Movies,Download} but our file
-    			//       doesn't seem to fit any of them.
-    			// TODO: use sqlite to store a single table with a
-    			//       single row and single column
-    			//       for the current filename
-    			//       that defaults to value R.string.log_event_filename
-    			File gpxfile = new File(root,sFileName);
-    			if (gpxfile.exists())
-    				writer = new FileWriter(gpxfile, true); // appends
-    			else
-    				writer = new FileWriter(gpxfile, false); // doesn't exist so overwrite a new file
-    			    // I hope this fixes the first click new user crash bug
-    		}
-    		catch(IOException e) {
-    			e.printStackTrace();
-    		}
-    		// needs testing
-    			// create log && notify user new file was created
-    	} // else { // external storage is either not available or not writeable - trouble
-		// notify user of no writeable storage and no log && exit
     }
 
     private void createNewButton(String newAction, String newActionString, Integer newButtonHeight) {
@@ -233,15 +183,7 @@ public class mark extends Activity implements OnClickListener, RadioGroup.OnChec
     
     @Override
     public void onPause() {
-    	// moved super to the top - hopefully this fixes the \n bug
         super.onPause();
-    	try {
-    	writer.flush();
-    	writer.close();
-    	}
-    	catch(IOException e) {
-    		e.printStackTrace();
-    	}
     }
 
     @Override
@@ -294,6 +236,7 @@ public class mark extends Activity implements OnClickListener, RadioGroup.OnChec
     }
 
     public void onClick(View v) {
+    	FileWriter writer;
 		Calendar rightnow = Calendar.getInstance();
 		Date x = rightnow.getTime();
 	        // x.getTime() should be identical rightnow.getTimeInMillis()
@@ -330,36 +273,94 @@ public class mark extends Activity implements OnClickListener, RadioGroup.OnChec
         }
         //Log.i(TAG, "recorded bad data?");
         
-        long presentTime = (rightnow.getTimeInMillis() / 1000);
+        boolean mExternalStorageAvailable = false;
+    	boolean mExternalStorageWriteable = false;
+    	String state = Environment.getExternalStorageState();
+    	if (Environment.MEDIA_MOUNTED.equals(state)) {
+    	    // We can read and write the media
+    	    mExternalStorageAvailable = mExternalStorageWriteable = true;
+    	} else if (Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
+    	    // We can only read the media
+    	    mExternalStorageAvailable = true;
+    	    mExternalStorageWriteable = false;
+    	} else {
+    	    // Something else is wrong. It may be one of many other states,
+    		// however all we need to know is we can neither read nor write
+    	    mExternalStorageAvailable = mExternalStorageWriteable = false;
+    	}
+
+        // get preference name & sFileName
+		Resources res = getResources();
+		String sFileName = res.getString(R.string.log_event_filename); //String sFileName = "activehabits.txt";
+        this.ahn = new ActiveHabitsName(this, sFileName);
+        sSetName = ahn.get();
+
+        // setup file object
+    	if (mExternalStorageAvailable & mExternalStorageWriteable ){
+    		// getExternalStorageDirectory()
+    		// check if file exists
+    		//read in last event from log
+    		try {
+    			File root = Environment.getExternalStorageDirectory();
+    			// Note: defaults to root of external storage.
+    			//       Spec says to use /Android/data/com.activehabits.android/files/
+    			//       I see no reason to subject users to something so cumbersome.
+    			//       Alternative spec says use one of {Music,Podcasts,Ringtones,
+    			//       Alarms,Notifications,Pictures,Movies,Download} but our file
+    			//       doesn't seem to fit any of them.
+    			// TODO: use sqlite to store a single table with a
+    			//       single row and single column
+    			//       for the current filename
+    			//       that defaults to value R.string.log_event_filename
+    			File gpxfile = new File(root,sFileName);
+    			if (gpxfile.exists())
+    				writer = new FileWriter(gpxfile, true); // appends
+    			else
+    				writer = new FileWriter(gpxfile, false); // doesn't exist so overwrite a new file
+    			    // I hope this fixes the first click new user crash bug
+/*    		}
+    		catch(IOException e) {
+    			e.printStackTrace();
+    		}
+    		// needs testing
+    			// create log && notify user new file was created
+    	} // else { // external storage is either not available or not writeable - trouble
+		// notify user of no writeable storage and no log && exit
+        
         try {
-        	if (b < 10) {
-        		Log.i(TAG, "mark write: "
-        		        + buttonText + "\t"
-        		        + presentTime + "\t"
-        		        + x.getHours() + ".0" + b + "\t"
-        		        + x.toLocaleString() + "\t" + locString);
-        		writer.append( buttonText + "\t"
-        		        + presentTime + "\t"
-        		        + x.getHours() + ".0" + b + "\t"
-        		        + x.toLocaleString() + "\t"
-        		        + locString + "\n");
-        	} else {
-        		Log.i(TAG, "mark write: "
-        		        + buttonText + "\t"
-        		        + presentTime + "\t"
-        		        + x.getHours() + "." + b + "\t"
-        		        + x.toLocaleString() + "\t"
-        		        + locString);
-        		writer.append( buttonText + "\t"
-        		        + presentTime + "\t"
-        		        + x.getHours() + "." + b + "\t"
-        		        + x.toLocaleString() + "\t"
-        		        + locString + "\n");
+*/
+    			long presentTime = (rightnow.getTimeInMillis() / 1000);
+        	    if (b < 10) { // pads hours if <10
+        		    Log.i(TAG, "mark write: "
+        		            + buttonText + "\t"
+        		            + presentTime + "\t"
+        		            + x.getHours() + ".0" + b + "\t"
+        		            + x.toLocaleString() + "\t" + locString);
+        		    writer.append( buttonText + "\t"
+        		            + presentTime + "\t"
+        		            + x.getHours() + ".0" + b + "\t"
+        		            + x.toLocaleString() + "\t"
+        		            + locString + "\n");
+        		} else { // doesn't pad hours
+        			Log.i(TAG, "mark write: "
+        		            + buttonText + "\t"
+        		            + presentTime + "\t"
+        		            + x.getHours() + "." + b + "\t"
+        		            + x.toLocaleString() + "\t"
+        		            + locString);
+        		    writer.append( buttonText + "\t"
+        		            + presentTime + "\t"
+        		            + x.getHours() + "." + b + "\t"
+        		            + x.toLocaleString() + "\t"
+        		            + locString + "\n");
+        		}
+        	    writer.flush();
+            	writer.close();
+            }
+    		catch (IOException e) {
+        		e.printStackTrace();
         	}
-        }
-        catch (IOException e) {
-        	e.printStackTrace();
-        }
+    	}
         // if a playlist is set, play it
         SharedPreferences myMgrPrefs = getSharedPreferences(sSetName, 0);
         String playAction = (String)v.getTag();
