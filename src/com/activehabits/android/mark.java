@@ -762,39 +762,43 @@ public class mark extends Activity implements OnClickListener, RadioGroup.OnChec
     }
     
     private static class ActiveHabitsName extends SQLiteOpenHelper {
-    	private static final String DATABASE_NAME = "activehabitsset.db";
+    	private static final String DATABASE_NAME = "activehabitsname.db";
     	private static final int DATABASE_VERSION = 1;
     	private static final String TABLE_NAME = "name";
+    	private final Context context;
     	private SQLiteDatabase db;
-    	
     	private static final String TABLE_CREATE =
     		"CREATE TABLE " + TABLE_NAME + " (name TEXT PRIMARY KEY);";
 
     	ActiveHabitsName(Context context) {
     		super(context, DATABASE_NAME, null, DATABASE_VERSION);
+    		this.context = context;
     	}
     	
-    	ActiveHabitsName(Context context, String defaultName) {
-    		super(context, DATABASE_NAME, null, DATABASE_VERSION);
+    	ActiveHabitsName(Context ctx, String defaultName) {
+    		super(ctx, DATABASE_NAME, null, DATABASE_VERSION);
+    		this.context = ctx;
     		//db.execSQL("SELECT * FROM " + TABLE_NAME);
     		// if not key exists set to defaultName
+    		// drop the table instead of searching?
     	}
 
     	@Override
     	public void onCreate(SQLiteDatabase indb) {
     		indb.execSQL(TABLE_CREATE);
-    		db = indb;
+    		this.db = indb;
     	}
     	
     	@Override
-    	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-    		db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
-    		onCreate(db);
+    	public void onUpgrade(SQLiteDatabase dbase, int oldVersion, int newVersion) {
+    		dbase.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
+    		onCreate(dbase);
     	}
     	
     	public String get() {
     		// return value
     		return "activehabits.txt"; // temp
+    		// this.db.execSQL
         }
 
     	public void put(String name) {

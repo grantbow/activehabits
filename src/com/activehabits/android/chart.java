@@ -33,7 +33,7 @@ import org.achartengine.renderer.XYSeriesRenderer;
 
 public class chart extends Activity {
 	private static final String TAG = "AH.chart";
-	private static final Integer MAXEVENTS = 50; // fixed max # events String[] of 50 for now
+	//private static final Integer MAXEVENTS = 50; // fixed max # events String[] of 50 for now // removed since arrays changed to ArrayList<string>
 	private Integer DATASETS = 1;
 
 	/* Called when the activity is first created. */
@@ -64,8 +64,9 @@ public class chart extends Activity {
         Integer l = 0; // lines of data, zero based
         ArrayList<String> eventName = new ArrayList<String>();
         ArrayList<String> eventSec = new ArrayList<String>();
+        ArrayList<String> eventInput = new ArrayList<String>();
         ArrayList<String> eventHour = new ArrayList<String>();
-        ArrayList<String> eventMore = new ArrayList<String>();
+        ArrayList<String> eventLoc = new ArrayList<String>();
         // assume data on SDcard exists and is good
         // assume no blank lines within data, x.length() > 0
         // assume no actions with line breaks in them
@@ -82,16 +83,18 @@ public class chart extends Activity {
                 Log.i(TAG, "buf.readline() " + x); // USEFUL
                 if ( ! x.startsWith("#") ) { // if not a comment
                     //Log.i(TAG, "chart read: " + x);
-                    temp = x.split("\t", 4); // Max 4 strings split on tabs, perfect
+                    temp = x.split("\t", 5); // Max 5 strings split on tabs, perfect, sample line follows
+                    // wake up	1294599870	input	11.06	Jan 9, 2011 11:04:30 AM	Location[mProvider=network,mTime=1294577632909,mLatitude=37.855569833333334,mLongitude=-122.1274694,mHasAltitude=false,mAltitude=0.0,mHasSpeed=false,mSpeed=0.0,mHasBearing=false,mBearing=0.0,mHasAccuracy=true,mAccuracy=130.0,mExtras=Bundle[mParcelledData.dataSize=148]]
                     //Log.i(TAG, "eventName " + temp[0]);
-                    // TODO: verify change from indexed to add is OK
                     eventName.add(temp[0]);
                     //Log.i(TAG, "eventSec " + temp[1]);
                     eventSec.add(temp[1]);
-                    //Log.i(TAG, "eventHour " + temp[2]);
-                    eventHour.add(temp[2]);
-                    //Log.i(TAG, "eventMore " + temp[3]);
-                    eventMore.add(temp[3]);
+                    //Log.i(TAG, "eventInput " + temp[2]);
+                    eventInput.add(temp[2]);
+                    //Log.i(TAG, "eventHour " + temp[3]);
+                    eventHour.add(temp[3]);
+                    //Log.i(TAG, "eventMore " + temp[4]);
+                    eventLoc.add(temp[4]);
                     l += 1; // only count lines of data
                 }
                 x = buf.readLine(); // next line
