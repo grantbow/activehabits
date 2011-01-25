@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Stack;
 
@@ -61,10 +62,10 @@ public class chart extends Activity {
     private XYMultipleSeriesDataset getDataset() {
         XYMultipleSeriesDataset dataset = new XYMultipleSeriesDataset();
         Integer l = 0; // lines of data, zero based
-        String[] eventName = new String[MAXEVENTS];
-        String[] eventSec = new String[MAXEVENTS];
-        String[] eventHour = new String[MAXEVENTS];
-        String[] eventMore = new String[MAXEVENTS];
+        ArrayList<String> eventName = new ArrayList<String>();
+        ArrayList<String> eventSec = new ArrayList<String>();
+        ArrayList<String> eventHour = new ArrayList<String>();
+        ArrayList<String> eventMore = new ArrayList<String>();
         // assume data on SDcard exists and is good
         // assume no blank lines within data, x.length() > 0
         // assume no actions with line breaks in them
@@ -83,13 +84,14 @@ public class chart extends Activity {
                     //Log.i(TAG, "chart read: " + x);
                     temp = x.split("\t", 4); // Max 4 strings split on tabs, perfect
                     //Log.i(TAG, "eventName " + temp[0]);
-                    eventName[l] = temp[0];
+                    // TODO: verify change from indexed to add is OK
+                    eventName.add(temp[0]);
                     //Log.i(TAG, "eventSec " + temp[1]);
-                    eventSec[l] = temp[1];
+                    eventSec.add(temp[1]);
                     //Log.i(TAG, "eventHour " + temp[2]);
-                    eventHour[l] = temp[2];
+                    eventHour.add(temp[2]);
                     //Log.i(TAG, "eventMore " + temp[3]);
-                    eventMore[l] = temp[3];
+                    eventMore.add(temp[3]);
                     l += 1; // only count lines of data
                 }
                 x = buf.readLine(); // next line
@@ -111,9 +113,9 @@ public class chart extends Activity {
         // Y range is 0 - 24 hours in the day TODO: chart from TOP to BOTTOM like a Calendar.
         Stack<String> eventList = new Stack<String>(); // eventList are unique values in eventName
         for (int k = 0; k < l; k++) {
-            if ( ! eventList.contains(eventName[k]) ) {
-            	eventList.add(eventName[k]);
-            	Log.i(TAG, "eventList add " + eventName[k]);
+            if ( ! eventList.contains(eventName.get(k)) ) {
+            	eventList.add(eventName.get(k));
+            	Log.i(TAG, "eventList add " + eventName.get(k));
             }
           }
 
@@ -125,8 +127,8 @@ public class chart extends Activity {
             String doit = (String) eventList.pop();
             TimeSeries series = new TimeSeries(doit); // eventName
             for (int k = 0; k < l; k++) {
-        	    if (doit.equals(eventName[k])) {
-                    series.add(new Date(Long.parseLong(eventSec[k])*1000), Double.parseDouble(eventHour[k]));
+        	    if (doit.equals(eventName.get(k))) {
+                    series.add(new Date(Long.parseLong(eventSec.get(k))*1000), Double.parseDouble(eventHour.get(k)));
                     //Log.i(TAG, "plot point in " + doit);
         	    }
             }
