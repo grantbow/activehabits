@@ -329,32 +329,36 @@ public class mark extends Activity implements OnClickListener, RadioGroup.OnChec
         
         try {
 */
-    			long presentTime = (rightnow.getTimeInMillis() / 1000);
-        	    if (b < 10) { // pads hours if <10
-        		    Log.i(TAG, "mark write: "
-        		            + buttonText + "\t"
-        		            + presentTime + "\t"
-        		            + x.getHours() + ".0" + b + "\t"
-        		            + x.toLocaleString() + "\t" + locString);
+                long presentTime = (rightnow.getTimeInMillis() / 1000);
+                if (b < 10) { // pads hours if <10
+                     Log.i(TAG, "mark write: "
+                            + buttonText + "\t"
+                            + presentTime + "\t"
+                            + "\t" // future user's text entry
+                            + x.getHours() + ".0" + b + "\t"
+                            + x.toLocaleString() + "\t" + locString);
         		    writer.append( buttonText + "\t"
-        		            + presentTime + "\t"
-        		            + x.getHours() + ".0" + b + "\t"
-        		            + x.toLocaleString() + "\t"
-        		            + locString + "\n");
+                            + presentTime + "\t"
+                            + "\t" // future user's text entry
+                            + x.getHours() + ".0" + b + "\t"
+                            + x.toLocaleString() + "\t"
+                            + locString + "\n");
         		} else { // doesn't pad hours
         			Log.i(TAG, "mark write: "
-        		            + buttonText + "\t"
-        		            + presentTime + "\t"
-        		            + x.getHours() + "." + b + "\t"
-        		            + x.toLocaleString() + "\t"
-        		            + locString);
+                            + buttonText + "\t"
+                            + presentTime + "\t"
+                            + "\t" // future user's text entry
+                            + x.getHours() + "." + b + "\t"
+                            + x.toLocaleString() + "\t"
+                            + locString);
         		    writer.append( buttonText + "\t"
-        		            + presentTime + "\t"
-        		            + x.getHours() + "." + b + "\t"
-        		            + x.toLocaleString() + "\t"
-        		            + locString + "\n");
+                            + presentTime + "\t"
+                            + "\t" // future user's text entry
+                            + x.getHours() + "." + b + "\t"
+                            + x.toLocaleString() + "\t"
+                            + locString + "\n");
         		}
-        	    writer.flush();
+                writer.flush();
             	writer.close();
             }
     		catch (IOException e) {
