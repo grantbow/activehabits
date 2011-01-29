@@ -1,8 +1,10 @@
 package com.activehabits.android;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
@@ -236,7 +238,6 @@ public class mark extends Activity implements OnClickListener, RadioGroup.OnChec
     }
 
     public void onClick(View v) {
-    	FileWriter writer;
 		Calendar rightnow = Calendar.getInstance();
 		Date x = rightnow.getTime();
 	        // x.getTime() should be identical rightnow.getTimeInMillis()
@@ -296,6 +297,8 @@ public class mark extends Activity implements OnClickListener, RadioGroup.OnChec
         sSetName = ahn.get();
 
         // setup file object
+    	FileWriter w;
+    	BufferedWriter writer;
     	if (mExternalStorageAvailable & mExternalStorageWriteable ){
     		// getExternalStorageDirectory()
     		// check if file exists
@@ -314,10 +317,14 @@ public class mark extends Activity implements OnClickListener, RadioGroup.OnChec
     			//       that defaults to value R.string.log_event_filename
     			File gpxfile = new File(root,sFileName);
     			if (gpxfile.exists())
-    				writer = new FileWriter(gpxfile, true); // appends
+    				// append
+                    w = new FileWriter(gpxfile, true);
     			else
-    				writer = new FileWriter(gpxfile, false); // doesn't exist so overwrite a new file
-    			    // I hope this fixes the first click new user crash bug
+    				// doesn't exist so overwrite a new file
+    				// this fixes the first click new user crash bug
+                    w = new FileWriter(gpxfile, false);
+                // wrap in a buffer
+                writer = new BufferedWriter(w);
 /*    		}
     		catch(IOException e) {
     			e.printStackTrace();
@@ -330,6 +337,19 @@ public class mark extends Activity implements OnClickListener, RadioGroup.OnChec
         try {
 */
                 long presentTime = (rightnow.getTimeInMillis() / 1000);
+                // prepare to write data
+            	RandomAccessFile r = new RandomAccessFile(gpxfile, "r");
+            	byte[] lastchars = new byte[11];
+            	long fs = r.length(); // file size
+            	Log.i(TAG, "mark fs = " + Long.toString(fs));
+            	r.seek(fs-10);
+            	r.read(lastchars, 0, 10); // tests show -1 = 10 and -0 = 0 (NUL)
+            	//String lc = new String(lastchar); // last char
+            	Log.i(TAG, "mark lc = " + new String(lastchars)); // for debugging
+                if (lastchars[9] != 10) { // check for an ASCII ESC
+                	writer.append("\n");
+                }
+                // write data
                 if (b < 10) { // pads hours if <10
                      Log.i(TAG, "mark write: "
                             + buttonText + "\t"
@@ -379,7 +399,7 @@ public class mark extends Activity implements OnClickListener, RadioGroup.OnChec
     	    intent.putExtra("playlist", pl );
     	    final Intent fintent = intent; // for passing into postDelayed
 
-    	    // Sleep 2 seconds here - another fix for \n bug
+            // Sleep 2 seconds here - a failed fix for \n bug
             Handler handler = new Handler();
             handler.postDelayed(new Runnable() {
                 public void run() {
