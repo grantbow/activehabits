@@ -76,6 +76,7 @@ public class mark extends Activity implements OnClickListener, RadioGroup.OnChec
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);                
+        this.onResume();
     }
 
     @Override
