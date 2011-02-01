@@ -19,10 +19,10 @@
         </activity>
         <activity android:name=".chart" android:label="@string/chart"/>
         <activity android:name="org.achartengine.GraphicalActivity" android:label="Chart Actions"/>
-        <activity android:name=".prefs" android:label="@string/prefs" />
-        <activity android:name=".splash" android:label="@string/splash" />
-        <activity android:name=".help" android:label="@string/help" />
-        <activity android:name=".about" android:label="@string/splash" />
+        <activity android:name=".prefs" android:label="@string/prefs" android:theme="@android:style/Theme.Dialog"/>
+        <activity android:name=".splash" android:label="@string/splash" android:theme="@android:style/Theme.Dialog"/>
+        <activity android:name=".help" android:label="@string/help" android:theme="@android:style/Theme.Dialog"/>
+        <activity android:name=".about" android:label="@string/splash" android:theme="@android:style/Theme.Dialog"/>
 
     </application>
 
