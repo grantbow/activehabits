@@ -214,7 +214,7 @@ public class chart extends Activity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {  // function not used, currently uses a separate activity
         MenuInflater inflater = getMenuInflater();
-        menu.removeItem(R.id.chart); // we are in chart so disable chart menu item
+        menu.removeItem(R.id.optionchart); // we are in chart so disable chart menu item
         inflater.inflate(R.menu.habit_menu, menu);
         return true;
     }
@@ -222,7 +222,7 @@ public class chart extends Activity {
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {  // function not used, currently uses a separate activity
         super.onPrepareOptionsMenu(menu);
-        menu.removeItem(R.id.chart);
+        menu.removeItem(R.id.optionchart);
         return true;
     }
 
@@ -230,7 +230,7 @@ public class chart extends Activity {
     public boolean onOptionsItemSelected(MenuItem item) {  // function not used, currently uses a separate activity
         // Handle item selection
         switch (item.getItemId()) {
-        case R.id.mark:
+        case R.id.optionmark:
         	Intent myChartIntent = new Intent(this, mark.class);
         	startActivity(myChartIntent);
             return true;
@@ -242,7 +242,7 @@ public class chart extends Activity {
 //          Intent myPrefIntent = new Intent(this,prefs.class);
 //          startActivity(myPrefIntent);
 //          return true;
-        case R.id.about:
+        case R.id.optionabout:
             Intent myAboutIntent = new Intent(this,about.class);
             startActivity(myAboutIntent);
             return true;

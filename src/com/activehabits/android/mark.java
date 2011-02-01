@@ -199,7 +199,7 @@ public class mark extends Activity implements OnClickListener, RadioGroup.OnChec
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) { // bottom menu
         super.onPrepareOptionsMenu(menu);
-        menu.removeItem(R.id.mark); // we are in mark so disable mark item
+        menu.removeItem(R.id.optionmark); // we are in mark so disable mark item
         // is it possible to make menu 1 x 3 instead of 2x2?
         return true;
     }
@@ -208,24 +208,24 @@ public class mark extends Activity implements OnClickListener, RadioGroup.OnChec
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
         switch (item.getItemId()) {
-        case R.id.addaction:
+        case R.id.optionaddaction:
         	addNewAction();
             return true;
-        case R.id.setmenu:
-        	showDialog(R.id.chooseset);
+        case R.id.optionsetmenu:
+        	showDialog(R.id.optionchooseset);
             return true;
-        case R.id.chart:
+        case R.id.optionchart:
         	Intent myChartIntent = new Intent(this,chart.class);
         	startActivity(myChartIntent);
         	finish();
             return true;
 //      case R.id.social:
 //          return true;
-        case R.id.help:
+        case R.id.optionhelp:
             Intent myHelpIntent = new Intent(this,help.class);
             startActivity(myHelpIntent);
             return true;
-        case R.id.about:
+        case R.id.optionabout:
             Intent myAboutIntent = new Intent(this,about.class);
             startActivity(myAboutIntent);
             return true;
@@ -468,7 +468,7 @@ public class mark extends Activity implements OnClickListener, RadioGroup.OnChec
         /* attach and create edit submenu */
         SubMenu editsub = menu.addSubMenu(R.string.editsubmenu);
         editsub.clear();
-        editsub.add(3, R.id.renameaction, 3, R.string.renametitle);
+        editsub.add(3, R.id.editrenameaction, 3, R.string.renametitle);
 
         /* attach and create playlist submenu */
         // TODO: submenu in correct ordering
@@ -519,16 +519,16 @@ public class mark extends Activity implements OnClickListener, RadioGroup.OnChec
         // Handle item selection
         switch (item.getItemId()) {
         /* case R.id.editsubmenu: handled automatically */
-        case R.id.renameaction:
+        case R.id.editrenameaction:
             showDialog(R.layout.rename);
             return true;
-        case R.id.removeaction:
+        case R.id.contextremoveaction:
             showDialog(R.layout.remove);
             return true;
-        case R.id.moveup:
+        case R.id.contextmoveup:
         	moveAction(theAction, "up");
             return true;
-        case R.id.movedown:
+        case R.id.contextmovedown:
         	moveAction(theAction, "down");
             return true;
         //case R.id.playlist: // done automatically
@@ -638,7 +638,7 @@ public class mark extends Activity implements OnClickListener, RadioGroup.OnChec
             //.setIcon(R.drawable.alert_dialog_icon)
             .create();
 
-        case R.id.chooseset:
+        case R.id.optionchooseset:
         	View chooseSetView = factory.inflate(R.layout.choose_set, null);
 
         	// choose set AlertDialog

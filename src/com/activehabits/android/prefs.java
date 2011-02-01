@@ -204,13 +204,13 @@ public class prefs extends PreferenceActivity {
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
-        menu.removeItem(R.id.mark);  // disable mark  item
-        menu.removeItem(R.id.chart); // disable chart item
+        menu.removeItem(R.id.optionmark);  // disable mark  item
+        menu.removeItem(R.id.optionchart); // disable chart item
 //      menu.removeItem(R.id.prefs); // we are in prefs so disable prefs item
 //      menu.removeItem(R.id.quit); // disable quit item
         if ( menu.findItem(R.id.removeaction) == null ) {
             // want to change prefs context menu order
-            Log.i(TAG, "prefs order: " + menu.findItem(R.id.about).getOrder());
+            Log.i(TAG, "prefs order: " + menu.findItem(R.id.optionabout).getOrder());
             //menu.add(Menu.FIRST, R.id.addaction, Menu.FIRST, getString(R.string.addaction)); // moved to menu
             menu.add(Menu.FIRST, R.id.removeaction, Menu.FIRST, getString(R.string.removeaction));
             //menu.add(Menu.FIRST, R.id.clearsplashed, Menu.FIRST, getString(R.string.clearsplashed));
@@ -238,7 +238,7 @@ public class prefs extends PreferenceActivity {
 //            Intent myPrefIntent = new Intent(this,prefs.class);
 //            startActivity(myPrefIntent);
 //            return true;
-        case R.id.addaction: {
+        case R.id.optionaddaction: {
             addNewAction();
             return true;
         }
@@ -250,7 +250,7 @@ public class prefs extends PreferenceActivity {
 //            clearSplashed();
 //            return true;
 //        }
-        case R.id.about:
+        case R.id.optionabout:
             Intent myAboutIntent = new Intent(this,about.class);
             startActivity(myAboutIntent);
             return true;
