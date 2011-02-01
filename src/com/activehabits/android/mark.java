@@ -212,7 +212,7 @@ public class mark extends Activity implements OnClickListener, RadioGroup.OnChec
         	addNewAction();
             return true;
         case R.id.optionsetmenu:
-        	showDialog(R.id.optionchooseset);
+            showDialog(R.id.optionchooseset);
             return true;
         case R.id.optionchart:
         	Intent myChartIntent = new Intent(this,chart.class);
@@ -269,6 +269,7 @@ public class mark extends Activity implements OnClickListener, RadioGroup.OnChec
         //Log.i(TAG, "R.string.markaction: " + getString(R.string.markaction));
         //if (buttonText == ((CharSequence) getString(R.string.markaction))) {
         if (buttonText.matches(getString(R.string.markaction))) {
+            // default button name accepted. This makes no sense.
             // TODO: \o/ dialog - rename before pressing a button, marking an action
             //Log.i(TAG, "buttonText MATCHED");
         	return;
@@ -559,22 +560,36 @@ public class mark extends Activity implements OnClickListener, RadioGroup.OnChec
         switch(id) {
 
         case R.layout.rename: //renameDialogInt: // from Context Item
-        	textEntryView = factory.inflate(R.layout.rename, null);
+            textEntryView = factory.inflate(R.layout.rename, null);
+            EditText userinput = (EditText) textEntryView.findViewById(R.id.renametext);
+            CharSequence oldButtonText = ((Button)contextMenuItem).getText();
+            //Log.i(TAG, "v1 " + (String)oldButtonText.subSequence(0,20) );
+            //Log.i(TAG, "v2 " + getString(R.string.markaction).subSequence(0,20) );
 
-        	/* return the constructed rename AlertDialog */
+            if ( ((String)oldButtonText).equals(getString(R.string.markaction)) ) {
+                // aha! never use == on strings, always use .equals()
+                userinput.setHint("");
+                userinput.setText(""); // clears value
+            }
+            else {
+                userinput.setHint("");
+                userinput.setText(oldButtonText); // sets to present value
+            }
+
+            /* return the constructed rename AlertDialog */
             // TODO: can enter be intercepted during dialog text entry?
-        	return new AlertDialog.Builder(mark.this)
-            .setTitle(R.string.renametitle) // add text of action
+            return new AlertDialog.Builder(mark.this)
+            .setTitle(R.string.renametitle) // add text of action to dialog name?
             .setView(textEntryView)
             .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int whichButton) {
                     /* User clicked OK */
-                	EditText b = (EditText) textEntryView.findViewById(R.id.renametext);
-                	final CharSequence ca;
-                	ca = (CharSequence) b.getText();
-                	// TODO: if result not null & ! equal to old result
+                    EditText b = (EditText) textEntryView.findViewById(R.id.renametext);
+                    final CharSequence ca;
+                    ca = (CharSequence) b.getText();
+                    // TODO: if result not null & ! equal to old result
                     /* change preference */
-                	CharSequence newAction = (CharSequence) ((Button)contextMenuItem).getTag();
+                    CharSequence newAction = (CharSequence) ((Button)contextMenuItem).getTag();
                 	//final CharSequence x = ((Button)contextMenuItem).getText();
                     //Log.i(TAG, "change " + newAction + " from " + x + " to " + ca );
                     SharedPreferences myMgrPrefs = getSharedPreferences(sSetName, 0);
