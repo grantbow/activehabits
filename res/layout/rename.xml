@@ -9,7 +9,6 @@
     android:layout_height="wrap_content"
     android:text="@string/renameprompt"
     android:gravity="center"
-    
     />
   <EditText 
     android:id="@id/renametext"

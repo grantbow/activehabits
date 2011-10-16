@@ -1,3 +1,18 @@
+/*Copyright 2011 Grant Bowman
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
+
 package com.activehabits.android;
 
 import java.io.BufferedWriter;
@@ -84,8 +99,8 @@ public class mark extends Activity implements OnClickListener, RadioGroup.OnChec
         super.onResume();
 
         // get preference name
-		Resources res = getResources();
-		String sFileName = res.getString(R.string.log_event_filename); //String sFileName = "activehabits.txt";
+        Resources res = getResources();
+        String sFileName = res.getString(R.string.log_event_filename); // = "activehabits.txt";
         this.ahn = new ActiveHabitsName(this, sFileName);
         sSetName = ahn.get();
         
@@ -96,7 +111,7 @@ public class mark extends Activity implements OnClickListener, RadioGroup.OnChec
         // prepare to add more buttons from myMgrPrefs if they exist
         Map<String, ?> bar = myMgrPrefs.getAll();
         //Log.i(TAG, "mark myMgrPrefs: " + bar.toString());
-        int len = sizeWithoutPl(myMgrPrefs);
+        int len = sizeWithoutPl(myMgrPrefs); // subtract playlists
 
         // roughly each button height = screen size / 1+len
         //         subtract for padding - use self.paddingValue
@@ -130,11 +145,11 @@ public class mark extends Activity implements OnClickListener, RadioGroup.OnChec
 
         if (setTo.equals(defaultSetTo) & (mark.splashed == 0)) {     // strange syntax to make it compare
             mark.splashed = 1;
-        	// assume if first action is not changed from default
-        	//     this is first run or help is needed so show splash
-        	Intent mySplashIntent = new Intent(this,splash.class);
-        	startActivityForResult(mySplashIntent,1);
-        	// TODO: review splash vs. about activity use
+            // assume if first action is not changed from default
+            //     this is first run or help is needed so show splash
+            Intent mySplashIntent = new Intent(this,splash.class);
+            startActivityForResult(mySplashIntent,1);
+            // TODO: review splash vs. about activity use
         }
 
         // add more buttons if they exist
@@ -246,6 +261,7 @@ public class mark extends Activity implements OnClickListener, RadioGroup.OnChec
 
         LocationManager locator = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
         Location loc = null;
+        String locString = "";
         try {
             loc = locator.getLastKnownLocation(LocationManager.GPS_PROVIDER);
             if (loc == null) {
@@ -253,21 +269,19 @@ public class mark extends Activity implements OnClickListener, RadioGroup.OnChec
                 loc = locator.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
                              // criteria, enabledOnly - getLastKnownLocation error check?
             }
+            if (loc != null) {
+            	locString = loc.toString();
+            }
         }
         catch (IllegalArgumentException e) {
             e.printStackTrace();
         }
-        String locString;
-        if (loc == null)
-        	locString = "";
-        else
-        	locString = loc.toString();
 
         String buttonText = ((Button) v).getText().toString();
 
         //Log.i(TAG, "buttonText: " + buttonText);
         //Log.i(TAG, "R.string.markaction: " + getString(R.string.markaction));
-        //if (buttonText == ((CharSequence) getString(R.string.markaction))) {
+        //if (buttonText == ((CharSequence) getString(R.string.markaction)))
         if (buttonText.matches(getString(R.string.markaction))) {
             // default button name accepted. This makes no sense.
             // TODO: \o/ dialog - rename before pressing a button, marking an action
@@ -299,94 +313,96 @@ public class mark extends Activity implements OnClickListener, RadioGroup.OnChec
         sSetName = ahn.get();
 
         // setup file object
+		File gpxfile;
     	FileWriter w;
     	BufferedWriter writer;
-    	if (mExternalStorageAvailable & mExternalStorageWriteable ){
-    		// getExternalStorageDirectory()
-    		// check if file exists
-    		//read in last event from log
-    		try {
-    			File root = Environment.getExternalStorageDirectory();
-    			// Note: defaults to root of external storage.
-    			//       Spec says to use /Android/data/com.activehabits.android/files/
-    			//       I see no reason to subject users to something so cumbersome.
-    			//       Alternative spec says use one of {Music,Podcasts,Ringtones,
-    			//       Alarms,Notifications,Pictures,Movies,Download} but our file
-    			//       doesn't seem to fit any of them.
-    			// TODO: use sqlite to store a single table with a
-    			//       single row and single column
-    			//       for the current filename
-    			//       that defaults to value R.string.log_event_filename
-    			File gpxfile = new File(root,sFileName);
-    			if (gpxfile.exists())
-    				// append
-                    w = new FileWriter(gpxfile, true);
-    			else
-    				// doesn't exist so overwrite a new file
-    				// this fixes the first click new user crash bug
-                    w = new FileWriter(gpxfile, false);
-                // wrap in a buffer
-                writer = new BufferedWriter(w);
-/*    		}
-    		catch(IOException e) {
-    			e.printStackTrace();
-    		}
-    		// needs testing
-    			// create log && notify user new file was created
-    	} // else { // external storage is either not available or not writeable - trouble
-		// notify user of no writeable storage and no log && exit
-        
-        try {
-*/
-                long presentTime = (rightnow.getTimeInMillis() / 1000);
-                // prepare to write data
-            	RandomAccessFile r = new RandomAccessFile(gpxfile, "r");
-            	byte[] lastchars = new byte[11];
-            	long fs = r.length(); // file size
-            	Log.i(TAG, "mark fs = " + Long.toString(fs));
-            	r.seek(fs-10);
-            	r.read(lastchars, 0, 10); // tests show -1 = 10 and -0 = 0 (NUL)
-            	//String lc = new String(lastchar); // last char
-            	Log.i(TAG, "mark lc = " + new String(lastchars)); // for debugging
-                if (lastchars[9] != 10) { // check for an ASCII ESC
-                	writer.append("\n");
-                }
-                // write data
-                if (b < 10) { // pads hours if <10
-                     Log.i(TAG, "mark write: "
-                            + buttonText + "\t"
-                            + presentTime + "\t"
-                            + "\t" // future user's text entry
-                            + x.getHours() + ".0" + b + "\t"
-                            + x.toLocaleString() + "\t" + locString);
-        		    writer.append( buttonText + "\t"
-                            + presentTime + "\t"
-                            + "\t" // future user's text entry
-                            + x.getHours() + ".0" + b + "\t"
-                            + x.toLocaleString() + "\t"
-                            + locString + "\n");
-        		} else { // doesn't pad hours
-        			Log.i(TAG, "mark write: "
-                            + buttonText + "\t"
-                            + presentTime + "\t"
-                            + "\t" // future user's text entry
-                            + x.getHours() + "." + b + "\t"
-                            + x.toLocaleString() + "\t"
-                            + locString);
-        		    writer.append( buttonText + "\t"
-                            + presentTime + "\t"
-                            + "\t" // future user's text entry
-                            + x.getHours() + "." + b + "\t"
-                            + x.toLocaleString() + "\t"
-                            + locString + "\n");
-        		}
-                writer.flush();
-            	writer.close();
-            }
-    		catch (IOException e) {
-        		e.printStackTrace();
-        	}
+    	RandomAccessFile r;
+
+    	if (! (mExternalStorageAvailable & mExternalStorageWriteable ) ){
+    		// dialog box
+    		finish();
     	}
+		// getExternalStorageDirectory()
+		// check if file exists
+		//read in last event from log
+		try {
+		    File root = Environment.getExternalStorageDirectory();
+    		// Note: defaults to root of external storage.
+    		//       Spec says to use /Android/data/com.activehabits.android/files/
+    		//       I see no reason to subject users to something so cumbersome.
+    		//       Alternative spec says use one of {Music,Podcasts,Ringtones,
+    		//       Alarms,Notifications,Pictures,Movies,Download} but our file
+    		//       doesn't seem to fit any of them.
+    		// TODO: use sqlite to store a single table with a
+    		//       single row and single column
+    		//       for the current filename
+    		//       that defaults to value R.string.log_event_filename
+    		gpxfile = new File(root,sFileName);
+    		if (gpxfile.exists()) // append
+                w = new FileWriter(gpxfile, true);
+    	    else // doesn't exist so overwrite a new file
+                // this fixes the first click new user crash bug
+                w = new FileWriter(gpxfile, false);
+            // wrap in a buffer
+            writer = new BufferedWriter(w);
+            r = new RandomAccessFile(gpxfile, "r");
+/*    	// needs testing
+    	    // create a log file && notify user new file was created & where
+         // else  // external storage is either not available or not writeable - trouble
+        // notify user of no writeable storage and no log && exit
+*/
+            long presentTime = (rightnow.getTimeInMillis() / 1000);
+            // prepare to write data
+        	long fs = r.length(); // file size
+        	Log.i(TAG, "mark fs = " + Long.toString(fs));
+//            byte[] lastchars = new byte[11];
+//            if (fs > 10) {
+//                r.seek(fs-10);
+//                r.read(lastchars, 0, 10); // tests show -1 = 10 and -0 = 0 (NUL)
+//                //String lc = new String(lastchar); // last char
+//                Log.i(TAG, "mark lc = " + new String(lastchars)); // for debugging
+//            }
+//            if (lastchars[9] != 10) { // check for an ASCII ESC
+//                writer.append("\n");
+//            }
+            // write data
+            if (b < 10) { // pads hours if <10
+                 Log.i(TAG, "mark write: "
+                        + buttonText + "\t"
+                        + presentTime + "\t"
+                        + "\t" // future user's text entry
+                        + x.getHours() + ".0" + b + "\t"
+                        + x.toLocaleString() + "\t" + locString);
+    		    writer.append( buttonText + "\t"
+                        + presentTime + "\t"
+                        + "\t" // future user's text entry
+                        + x.getHours() + ".0" + b + "\t"
+                        + x.toLocaleString() + "\t"
+                        + locString + "\n");
+    		} else { // doesn't pad hours
+    			Log.i(TAG, "mark write: "
+                        + buttonText + "\t"
+                        + presentTime + "\t"
+                        + "\t" // future user's text entry
+                        + x.getHours() + "." + b + "\t"
+                        + x.toLocaleString() + "\t"
+                        + locString);
+    		    writer.append( buttonText + "\t"
+                        + presentTime + "\t"
+                        + "\t" // future user's text entry
+                        + x.getHours() + "." + b + "\t"
+                        + x.toLocaleString() + "\t"
+                        + locString + "\n");
+    		}
+            writer.flush();
+        	writer.close();
+        }
+		catch (IOException e) {
+    		e.printStackTrace();
+    		// dialog box
+    		finish();
+        }
+		
         // if a playlist is set, play it
         SharedPreferences myMgrPrefs = getSharedPreferences(sSetName, 0);
         String playAction = (String)v.getTag();
@@ -415,14 +431,14 @@ public class mark extends Activity implements OnClickListener, RadioGroup.OnChec
         }
         
         /* store clicked item as history */
-        // lastactionpl is the key
+        // lastactionpl is the key for the value
         // "[button's name], [human readable date string]" is the value, ready for display
         Editor e = myMgrPrefs.edit();
         e.putString("lastactionpl", "last action: " + buttonText + " @ " +  x.toLocaleString() );
         e.commit();
 
-    	finish();
-	}
+        finish();
+    }
 
     private void addNewAction() {
         SharedPreferences myMgrPrefs = getSharedPreferences(sSetName,0);
@@ -463,6 +479,7 @@ public class mark extends Activity implements OnClickListener, RadioGroup.OnChec
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.context_menu, menu);
         contextMenuItem = v; // stores button context menu called from // does not need to move to onPrepareContextMenu
+        menu.setHeaderTitle(((Button)v).getText());
 
         // submenus can NOT BE NESTED but they can be next to each other
         
@@ -776,7 +793,7 @@ public class mark extends Activity implements OnClickListener, RadioGroup.OnChec
             // impossible, TODO: dialog to notify of illegal action
         	return 1;
         }
-	    //Log.i(TAG, "remove " + oldAction + ", move from " + begin + " to len " + len);
+	    Log.i(TAG, "remove " + theAction + ", move from " + begin + " to len " + len);
         //Log.i(TAG, "mark myMgrPrefs before: " + myMgrPrefs.getAll().toString() );
 	    String tempAction = null;
 	    // String tempPlaylist = null; // TODO: move playlists too
@@ -800,13 +817,13 @@ public class mark extends Activity implements OnClickListener, RadioGroup.OnChec
         startActivity(myRemovePrefIntent);
         return 1;
     }
-    
+
     private static class ActiveHabitsName extends SQLiteOpenHelper {
     	private static final String DATABASE_NAME = "activehabitsname.db";
     	private static final int DATABASE_VERSION = 1;
     	private static final String TABLE_NAME = "name";
-    	private final Context context;
-    	private SQLiteDatabase db;
+        private final Context context;
+        private SQLiteDatabase db;
     	private static final String TABLE_CREATE =
     		"CREATE TABLE " + TABLE_NAME + " (name TEXT PRIMARY KEY);";
 
@@ -841,9 +858,9 @@ public class mark extends Activity implements OnClickListener, RadioGroup.OnChec
     		// this.db.execSQL
         }
 
-    	public void put(String name) {
+    	//public void put(String name) {
     		// store value
-        }
+        //}
     }
 
 };

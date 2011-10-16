@@ -1,3 +1,18 @@
+/*Copyright 2011 Grant Bowman
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
+
 package com.activehabits.android;
 
 import java.io.BufferedReader;
@@ -131,7 +146,7 @@ public class chart extends Activity {
             TimeSeries series = new TimeSeries(doit); // eventName
             for (int k = 0; k < l; k++) {
         	    if (doit.equals(eventName.get(k))) {
-                    series.add(new Date(Long.parseLong(eventSec.get(k))*1000), Double.parseDouble(eventHour.get(k)));
+                    series.add(new Date(Long.parseLong(eventSec.get(k))*1000), - Double.parseDouble(eventHour.get(k)));
                     //Log.i(TAG, "plot point in " + doit);
         	    }
             }
@@ -145,7 +160,7 @@ public class chart extends Activity {
     private XYMultipleSeriesRenderer getRenderer() {
         XYMultipleSeriesRenderer renderer = new XYMultipleSeriesRenderer();
         // prepare XYSeriesRenderer
-        // ASSUMES no more than 7 DATASETS
+        // ASSUMES no more than 7 DATASETS / sets of actions
         switch (DATASETS) { // must only setup and add a renderer *if* a data set exists
         case 7:
 	        XYSeriesRenderer w = new XYSeriesRenderer();
@@ -199,8 +214,9 @@ public class chart extends Activity {
         renderer.setYLabels(3);
         renderer.setXAxisMin(renderer.getXAxisMin() - 86400000);
         renderer.setXAxisMax(renderer.getXAxisMax() + 86400000);
-        renderer.setYAxisMin(0.0);
-        renderer.setYAxisMax(24.0);
+        renderer.setYAxisMax(0.0);
+        renderer.setYAxisMin(-24.0);
+        //renderer.setDateFormat(); //available on class TimeChart, see the TimeChart Intent we use
         renderer.setLegendTextSize(14);
         renderer.setDisplayChartValues(false); // text on plotted values
         renderer.setShowGrid(true);

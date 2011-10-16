@@ -20,7 +20,7 @@
     <string name="cancel">Cancel</string>
     <string name="actionname">Action name:</string>
     <string name="addaction">New Action</string>
-    <string name="removeaction">Remove</string>
+    <string name="removeaction">Delete</string>
     <string name="clearsplashed">Restore Splash Page</string>
     <string name="splash">About ActiveHabits</string>
     <string name="renametitle">Rename Action</string>
