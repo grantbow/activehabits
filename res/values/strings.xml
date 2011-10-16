@@ -20,12 +20,12 @@
     <string name="cancel">Cancel</string>
     <string name="actionname">Action name:</string>
     <string name="addaction">New Action</string>
-    <string name="removeaction">Delete</string>
+    <string name="contextremoveaction">Delete</string>
     <string name="clearsplashed">Restore Splash Page</string>
     <string name="splash">About ActiveHabits</string>
     <string name="renametitle">Rename Action</string>
     <string name="renameprompt">Enter the new name:</string>
-    <string name="removetitle">Remove Action</string>
+<!--     <string name="removetitle">Remove Action</string>  -->
     <string name="removeprompt">Are you sure you want to remove this action?</string>
     <string name="description">\n\n\n\n    Marking any action repeatedly can form a habit.\n\n    The software that became ActiveHabits was originally used to mark \'wake up\' &amp; \'go to bed\' actions, a sleep habit.\n\n    We hope to someday hear how you use ActiveHabits.\n\nThis activity was carefully crafted by http://activehabits.com\n</string>
     <string name="help01">\n\n\n\nGetting Started: Rename the default action.  Click the button to mark/record the date &amp; location when marked.\n\n    Data is stored as ActiveHabits.txt on your SD card.\n</string>
@@ -33,8 +33,8 @@
     <string name="playlistchange">Playlist...</string>
     <string name="playlistprompt">Choose a playlist for this action</string>
     <string name="playlistclear"> - no playlist - </string>
-    <string name="moveup">Move Up</string>
-    <string name="movedown">Move Down</string>
+    <string name="contextmoveup">Move Up</string>
+    <string name="contextmovedown">Move Down</string>
     <string name="editsubmenu">Edit ...</string>
     <string name="editaction">Edit Action</string>
     <string name="setmenu">Set ...</string>

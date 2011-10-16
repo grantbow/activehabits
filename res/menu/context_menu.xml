@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/moveup"
-          android:title="@string/moveup"
+    <item android:id="@+id/contextmoveup"
+          android:title="@string/contextmoveup"
           android:orderInCategory="1" />
-    <item android:id="@+id/movedown"
-          android:title="@string/movedown"
+    <item android:id="@+id/contextmovedown"
+          android:title="@string/contextmovedown"
           android:orderInCategory="2" />
 <!-- <item android:id="@+id/editsubmenu"
           android:title="@string/editsubmenu"
@@ -17,8 +17,8 @@
           android:orderInCategory="4"/>
      <item android:id="@+id/history"
           android:title="@string/history" /> unmark copyrecent, change date/time, share -->
-    <item android:id="@+id/removeaction"
-          android:title="@string/removeaction"
+    <item android:id="@+id/contextremoveaction"
+          android:title="@string/contextremoveaction"
           android:orderInCategory="3" />
 <!-- <item android:id="@+id/playlist"
           android:title="@string/playlistchange" /> -->

@@ -544,15 +544,17 @@ public class mark extends Activity implements OnClickListener, RadioGroup.OnChec
             showDialog(R.layout.remove);
             return true;
         case R.id.contextmoveup:
+            //Log.i(TAG, "up " + R.id.contextmoveup);
         	moveAction(theAction, "up");
             return true;
         case R.id.contextmovedown:
+            //Log.i(TAG, "down " + R.id.contextmovedown);
         	moveAction(theAction, "down");
             return true;
         //case R.id.playlist: // done automatically
         case R.id.playlistclear:
         	/* set pl to null */
-        	Log.i(TAG, "playlistclear from " + myMgrPrefs.getString(theAction + "pl", null) + " to null");
+            //Log.i(TAG, "playlistclear from " + myMgrPrefs.getString(theAction + "pl", null) + " to null");
             e.putString(theAction + "pl", null);
             e.commit();
         	return true;
@@ -566,6 +568,8 @@ public class mark extends Activity implements OnClickListener, RadioGroup.OnChec
             e.commit();
         	return true;
         default:
+            //Log.i(TAG, "menu, up " + R.id.contextmoveup + " down " + R.id.contextmovedown);
+            Log.i(TAG, "default! " + item.getItemId() );
             return super.onContextItemSelected(item);
         }
     }
@@ -614,7 +618,7 @@ public class mark extends Activity implements OnClickListener, RadioGroup.OnChec
                     Editor e = myMgrPrefs.edit();
                     e.putString( newAction.toString(), ca.toString());
                     e.commit();
-                    //Log.i(TAG, "mark myMgrPrefs  after: " + myMgrPrefs.getAll().toString());
+                    Log.i(TAG, "mark myMgrPrefs  after: " + myMgrPrefs.getAll().toString());
                 	
                     /* change button */
                 	((Button)contextMenuItem).setText(ca);
@@ -633,7 +637,7 @@ public class mark extends Activity implements OnClickListener, RadioGroup.OnChec
         	
         	// confirm remove AlertDialog
         	return new AlertDialog.Builder(mark.this)
-            .setTitle(R.string.removetitle)
+            .setTitle(R.string.contextremoveaction)
             .setView(confirmView)
             .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int whichButton) {
@@ -644,7 +648,7 @@ public class mark extends Activity implements OnClickListener, RadioGroup.OnChec
                     int len = sizeWithoutPl(myMgrPrefs);
                 	// assume string of exactly "actionX", X<10
                 	int begin = Integer.parseInt(oldAction.subSequence(6, 7).toString());
-                	//Log.i(TAG, "remove " + oldAction + ", move from " + begin + " to len " + len);
+                	Log.i(TAG, "remove " + oldAction + ", move from " + begin + " to len " + len);
                     //Log.i(TAG, "mark myMgrPrefs before: " + myMgrPrefs.getAll().toString() );
                     Editor e = myMgrPrefs.edit();
                     for (int i = begin; i < len ; ++i) {
@@ -655,7 +659,7 @@ public class mark extends Activity implements OnClickListener, RadioGroup.OnChec
                     e.remove("action"+(len-1));
                     e.remove("action"+(len-1)+"pl");
                     e.commit();
-                    //Log.i(TAG, "mark myMgrPrefs  after: " + myMgrPrefs.getAll().toString());
+                    Log.i(TAG, "mark myMgrPrefs  after: " + myMgrPrefs.getAll().toString());
 
                     // redraw
                     Intent myRemovePrefIntent = new Intent(getBaseContext(), mark.class);
@@ -787,14 +791,14 @@ public class mark extends Activity implements OnClickListener, RadioGroup.OnChec
     private int moveAction(CharSequence theAction, CharSequence direction) {
         SharedPreferences myMgrPrefs = getSharedPreferences(sSetName, 0);
         int len = sizeWithoutPl(myMgrPrefs);
-	    // assume string of exactly "actionX", X<10
+	    // assume string of exactly "actionX", X is int, X<10
 	    int begin = Integer.parseInt(theAction.subSequence(6, 7).toString());
+	    //Log.i(TAG, "move " + theAction + ", move from " + begin + ", len " + len);
+        //Log.i(TAG, "mark myMgrPrefs before: " + myMgrPrefs.getAll().toString() );
         if (  ( (begin == len) && (direction == "up") ) || ( (begin == 1) && (direction == "down") ) ) {
             // impossible, TODO: dialog to notify of illegal action
         	return 1;
         }
-	    Log.i(TAG, "remove " + theAction + ", move from " + begin + " to len " + len);
-        //Log.i(TAG, "mark myMgrPrefs before: " + myMgrPrefs.getAll().toString() );
 	    String tempAction = null;
 	    // String tempPlaylist = null; // TODO: move playlists too
 	    Editor e = myMgrPrefs.edit();

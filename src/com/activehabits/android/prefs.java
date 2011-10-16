@@ -224,11 +224,11 @@ public class prefs extends PreferenceActivity {
         menu.removeItem(R.id.optionchart); // disable chart item
 //      menu.removeItem(R.id.prefs); // we are in prefs so disable prefs item
 //      menu.removeItem(R.id.quit); // disable quit item
-        if ( menu.findItem(R.id.removeaction) == null ) {
+        if ( menu.findItem(R.id.contextremoveaction) == null ) {
             // want to change prefs context menu order
             Log.i(TAG, "prefs order: " + menu.findItem(R.id.optionabout).getOrder());
             //menu.add(Menu.FIRST, R.id.addaction, Menu.FIRST, getString(R.string.addaction)); // moved to menu
-            menu.add(Menu.FIRST, R.id.removeaction, Menu.FIRST, getString(R.string.removeaction));
+            menu.add(Menu.FIRST, R.id.contextremoveaction, Menu.FIRST, getString(R.string.contextremoveaction));
             //menu.add(Menu.FIRST, R.id.clearsplashed, Menu.FIRST, getString(R.string.clearsplashed));
         }
         return true;
@@ -258,7 +258,7 @@ public class prefs extends PreferenceActivity {
             addNewAction();
             return true;
         }
-        case R.id.removeaction: {
+        case R.id.contextremoveaction: {
             removeAction();
             return true;
         }
