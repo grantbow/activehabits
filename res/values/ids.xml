@@ -10,6 +10,7 @@
     <item type="id" name="contextremoveaction" />
     <item type="id" name="clearsplashed" />
     <item type="id" name="editrenameaction" />
+    <item type="id" name="editactioncolor" />
     <item type="id" name="renametext" />
     <item type="id" name="ImageView01" />
     <item type="id" name="TextView01" />

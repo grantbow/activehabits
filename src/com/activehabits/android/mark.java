@@ -15,6 +15,8 @@
 
 package com.activehabits.android;
 
+import com.activehabits.android.ColorPickerDialog;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -68,12 +70,12 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
-public class mark extends Activity implements OnClickListener, RadioGroup.OnCheckedChangeListener {
+public class mark extends Activity implements OnClickListener, RadioGroup.OnCheckedChangeListener, ColorPickerDialog.OnColorChangedListener {
     private static final String TAG = "AH.mark"; // for Log.i(TAG, ...);
     //private static FileWriter writer;
     private static int paddingValue = 7; // * 10 pixels for calculating button sizes
     private static int splashed = 0;
-    protected static String currentSet = "activehabits.txt"; // current set 
+    protected static String currentSet = "activehabits.txt"; // current set until mysql
     protected static int radioSet = 0; // radio selection of set 
     private View contextMenuItem; // button long pressed for context menu
     private View textEntryView;   // TextEntry for renaming
@@ -487,6 +489,8 @@ public class mark extends Activity implements OnClickListener, RadioGroup.OnChec
         SubMenu editsub = menu.addSubMenu(R.string.editsubmenu);
         editsub.clear();
         editsub.add(3, R.id.editrenameaction, 3, R.string.renametitle);
+        // TODO: color - enable menu item, add storage
+        editsub.add(3, R.id.editactioncolor, 3, R.string.colortitle);
 
         /* attach and create playlist submenu */
         // TODO: submenu in correct ordering
@@ -540,6 +544,10 @@ public class mark extends Activity implements OnClickListener, RadioGroup.OnChec
         case R.id.editrenameaction:
             showDialog(R.layout.rename);
             return true;
+        case R.id.editactioncolor:
+        	new ColorPickerDialog(this, this, 0x33FFFFFF).show();
+        	// colorChanged handles setting the new color
+        	return true;
         case R.id.contextremoveaction:
             showDialog(R.layout.remove);
             return true;
@@ -574,7 +582,13 @@ public class mark extends Activity implements OnClickListener, RadioGroup.OnChec
         }
     }
 
-    @Override
+	@Override
+	public void colorChanged(int newColor) {
+        ((Button)contextMenuItem).getBackground().setColorFilter(newColor, PorterDuff.Mode.MULTIPLY);
+        // ColorPickerDialog.OnColorChangedListener 
+    }
+
+	@Override
     protected Dialog onCreateDialog(int id) {
     	LayoutInflater factory = LayoutInflater.from(mark.this);
     	//Dialog dialog;

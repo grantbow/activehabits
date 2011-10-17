@@ -1,16 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:layout_gravity="center_vertical">
-  <Button
-    android:id="@+id/log_event_button"
+  <LinearLayout 
+    android:orientation="vertical"
     android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:text="@string/markaction"
-    android:clickable="true"
-    android:longClickable="true"
-    android:focusableInTouchMode="false"
-    android:focusable="true"/>
-</LinearLayout>
+    android:layout_height="fill_parent"
+    android:layout_gravity="center_vertical">
+    <Button
+      android:id="@+id/log_event_button"
+      android:layout_width="fill_parent"
+      android:layout_height="wrap_content"
+      android:text="@string/markaction"
+      android:clickable="true"
+      android:longClickable="true"
+      android:focusableInTouchMode="false"
+      android:focusable="true"/>
+  </LinearLayout>
+</ScrollView>

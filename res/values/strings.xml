@@ -24,6 +24,7 @@
     <string name="clearsplashed">Restore Splash Page</string>
     <string name="splash">About ActiveHabits</string>
     <string name="renametitle">Rename Button</string>
+    <string name="colortitle">Color Button</string>
     <string name="renameprompt">Enter the new name:</string>
 <!--     <string name="removetitle">Remove Action</string>  -->
     <string name="removeprompt">Are you sure you want to remove this button?</string>
