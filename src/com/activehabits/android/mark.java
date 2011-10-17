@@ -110,8 +110,8 @@ public class mark extends Activity implements OnClickListener, RadioGroup.OnChec
 
         // prepare to add more buttons from myMgrPrefs if they exist
         Map<String, ?> bar = myMgrPrefs.getAll();
-        //Log.i(TAG, "mark myMgrPrefs: " + bar.toString());
-        int len = sizeWithoutPl(myMgrPrefs); // subtract playlists
+        Log.i(TAG, "mark myMgrPrefs: " + bar.toString());
+        int len = sizeWithoutPl(myMgrPrefs); // subtract playlists & lastactionpl
 
         // roughly each button height = screen size / 1+len
         //         subtract for padding - use self.paddingValue
@@ -170,8 +170,8 @@ public class mark extends Activity implements OnClickListener, RadioGroup.OnChec
             ((TextView) history).setText(myMgrPrefs.getString("lastactionpl", ""));
             ((ViewGroup) logEventButton.getParent()).addView(history);
 		}
-		catch(Exception e) {
-			e.printStackTrace();
+		catch(Exception err) {
+			err.printStackTrace();
 		}
     }
 
@@ -273,8 +273,8 @@ public class mark extends Activity implements OnClickListener, RadioGroup.OnChec
             	locString = loc.toString();
             }
         }
-        catch (IllegalArgumentException e) {
-            e.printStackTrace();
+        catch (IllegalArgumentException err) {
+            err.printStackTrace();
         }
 
         String buttonText = ((Button) v).getText().toString();
@@ -397,8 +397,8 @@ public class mark extends Activity implements OnClickListener, RadioGroup.OnChec
             writer.flush();
         	writer.close();
         }
-		catch (IOException e) {
-    		e.printStackTrace();
+		catch (IOException err) {
+    		err.printStackTrace();
     		// dialog box
     		finish();
         }
@@ -618,7 +618,7 @@ public class mark extends Activity implements OnClickListener, RadioGroup.OnChec
                     Editor e = myMgrPrefs.edit();
                     e.putString( newAction.toString(), ca.toString());
                     e.commit();
-                    Log.i(TAG, "mark myMgrPrefs  after: " + myMgrPrefs.getAll().toString());
+                    //Log.i(TAG, "mark myMgrPrefs  after: " + myMgrPrefs.getAll().toString());
                 	
                     /* change button */
                 	((Button)contextMenuItem).setText(ca);
@@ -648,8 +648,9 @@ public class mark extends Activity implements OnClickListener, RadioGroup.OnChec
                     int len = sizeWithoutPl(myMgrPrefs);
                 	// assume string of exactly "actionX", X<10
                 	int begin = Integer.parseInt(oldAction.subSequence(6, 7).toString());
+                	// Log for removing
                 	Log.i(TAG, "remove " + oldAction + ", move from " + begin + " to len " + len);
-                    //Log.i(TAG, "mark myMgrPrefs before: " + myMgrPrefs.getAll().toString() );
+                    Log.i(TAG, "mark myMgrPrefs before: " + myMgrPrefs.getAll().toString() );
                     Editor e = myMgrPrefs.edit();
                     for (int i = begin; i < len ; ++i) {
                         String newAction = "action" + i;
@@ -772,15 +773,25 @@ public class mark extends Activity implements OnClickListener, RadioGroup.OnChec
         String s;                               // s       is string to be tested
         for (i = 0; i < total; ++i) {
         	s = bar.next();
+        	// remove action-1 if it exists
+        	if ( s.matches("action-1")) {
+                Editor e = myMgrPrefs.edit();
+                e.remove(s);
+                e.remove(s + "pl");
+                e.commit();
+        	    Log.i(TAG, " ----- removed action-1 -----");
+        	}
+        	Log.i(TAG, " tag " + s);
             if ( ! (s == null) ) {
                 //Log.i(TAG, "s " + s);
+                // lastactionpl also matches
             	if ( s.matches(".*pl") ) {
                     //Log.i(TAG, "s matched");
             	    totalPl = totalPl+1;
                 }
             }
         }
-        //Log.i(TAG, "sizeWithoutPl" + " total " + total + ", totalPl " + totalPl);
+        Log.i(TAG, "sizeWithoutPl, total-totalPL "+ (total - totalPl) + ", total " + total + ", totalPl " + totalPl );
         if ((total - totalPl) == 0) {
         	return 1; // 0,0 or all must all be playlists
         } else {
@@ -793,9 +804,9 @@ public class mark extends Activity implements OnClickListener, RadioGroup.OnChec
         int len = sizeWithoutPl(myMgrPrefs);
 	    // assume string of exactly "actionX", X is int, X<10
 	    int begin = Integer.parseInt(theAction.subSequence(6, 7).toString());
-	    //Log.i(TAG, "move " + theAction + ", move from " + begin + ", len " + len);
-        //Log.i(TAG, "mark myMgrPrefs before: " + myMgrPrefs.getAll().toString() );
-        if (  ( (begin == len) && (direction == "up") ) || ( (begin == 1) && (direction == "down") ) ) {
+	    Log.i(TAG, "move " + theAction + ", move from " + begin + ", len " + len + ", direction "+ direction);
+        Log.i(TAG, "mark myMgrPrefs before: " + myMgrPrefs.getAll().toString() );
+        if (  ( (begin == len-1) && (direction == "down") ) || ( (begin == 0) && (direction == "up") ) ) {
             // impossible, TODO: dialog to notify of illegal action
         	return 1;
         }
