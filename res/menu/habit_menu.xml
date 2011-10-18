@@ -3,9 +3,11 @@
     <item android:id="@+id/optionmark"
           android:title="@string/mark" />
     <item android:id="@+id/optionaddaction"
-          android:title="@string/addaction" />
+          android:title="@string/addaction"
+          android:icon="@drawable/sym_action_add" />
     <item android:id="@+id/optionchart"
-          android:title="@string/chart" />
+          android:title="@string/chart"
+          android:icon="@drawable/ic_menu_picture" />
 <!--<item android:id="@+id/optionsetmenu"
           android:title="@string/setmenu" />
     <item android:id="@+id/social"
@@ -13,9 +15,9 @@
     <item android:id="@+id/prefs"
           android:title="@string/prefs" /> -->
     <item android:id="@+id/optionhelp"
-          android:title="@string/help" />
+          android:title="@string/help"
+          android:icon="@drawable/ic_settings_help" />
     <item android:id="@+id/optionabout"
-          android:title="@string/about" />
-<!-- <item android:id="@+id/quit"
-          android:title="@string/close" /> -->
+          android:title="@string/about"
+          android:icon="@drawable/ic_settings_about" />
 </menu>

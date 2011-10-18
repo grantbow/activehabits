@@ -53,6 +53,7 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.LayoutInflater.Factory;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -212,7 +213,7 @@ public class mark extends Activity implements OnClickListener, RadioGroup.OnChec
         inflater.inflate(R.menu.habit_menu, menu);
         return true;
     }
-
+    
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) { // bottom menu
         super.onPrepareOptionsMenu(menu);
