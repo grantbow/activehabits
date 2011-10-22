@@ -490,7 +490,9 @@ public class mark extends Activity implements OnClickListener, RadioGroup.OnChec
         SubMenu editsub = menu.addSubMenu(R.string.editsubmenu);
         editsub.clear();
         editsub.add(3, R.id.editrenameaction, 3, R.string.renametitle);
-        // TODO: color - enable menu item, add storage
+        editsub.add(3, R.id.contextmoveup, 3, R.string.contextmoveup);
+        editsub.add(3, R.id.contextmovedown, 3, R.string.contextmovedown);
+        // TODO: color - add storage
         editsub.add(3, R.id.editactioncolor, 3, R.string.colortitle);
 
         /* attach and create playlist submenu */

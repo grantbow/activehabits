@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/contextmoveup"
+<!--<item android:id="@+id/contextmoveup"
           android:title="@string/contextmoveup"
           android:orderInCategory="1" />
     <item android:id="@+id/contextmovedown"
           android:title="@string/contextmovedown"
           android:orderInCategory="2" />
-<!-- <item android:id="@+id/editsubmenu"
+    <item android:id="@+id/editsubmenu"
           android:title="@string/editsubmenu"
           android:orderInCategory="3" />
-     <item android:id="@+id/renameaction"
+    <item android:id="@+id/renameaction"
           android:title="@string/renameaction" 
           android:orderInCategory="3" />
-     <item android:id="@+id/addaction"
+    <item android:id="@+id/addaction"
           android:title="@string/addaction"
           android:orderInCategory="4"/>
-     <item android:id="@+id/history"
+    <item android:id="@+id/history"
           android:title="@string/history" /> unmark copyrecent, change date/time, share -->
     <item android:id="@+id/contextremoveaction"
           android:title="@string/contextremoveaction"
