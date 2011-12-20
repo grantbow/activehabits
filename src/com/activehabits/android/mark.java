@@ -53,7 +53,6 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.view.LayoutInflater.Factory;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.Menu;
