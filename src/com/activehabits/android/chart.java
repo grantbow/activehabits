@@ -108,9 +108,9 @@ public class chart extends Activity {
                     // Log.i(TAG, "*BAD* eventSec " + temp[1]);
                     eventSec.add(temp[1]);
                     //Log.i(TAG, "eventHour " + temp[2]);
-                    eventHour.add(temp[2]);
+                    eventInput.add(temp[2]);
                     //Log.i(TAG, "eventInput " + temp[3]);
-                    eventInput.add(temp[3]);
+                    eventHour.add(temp[3]);
                     //Log.i(TAG, "eventMore " + temp[4]);
                     eventLoc.add(temp[4]);
                     l += 1; // only count lines of data
@@ -147,15 +147,17 @@ public class chart extends Activity {
         for (int i = 0; i < DATASETS; i++) {
             String doit = (String) eventList.pop();
             TimeSeries series = new TimeSeries(doit); // eventName
-                for (int k = 0; k < l; k++) {
-                    if (doit.equals(eventName.get(k))) {
-                        try {
-                            series.add(new Date(Long.parseLong(eventSec.get(k))*1000), - Double.parseDouble(eventHour.get(k)));
-                        }
-                        catch (NumberFormatException e) {
-                        Log.i(TAG, "exception " + e);
-                    }
+            for (int k = 0; k < l; k++) {
+                if (doit.equals(eventName.get(k))) {
                     //Log.i(TAG, "plot point in " + doit);
+                    //Log.i(TAG, "plot point at " + eventSec.get(k) + " hour " + eventInput.get(k));
+                    try {
+                    	/* charting negative hour values so time flows downward */
+                        series.add(new Date(Long.parseLong(eventSec.get(k))*1000), - Double.parseDouble(eventHour.get(k)));
+                    }
+                    catch (NumberFormatException e) {
+                        Log.i(TAG, "exception " + e );
+                    }
                 }
             }
             //Log.i(TAG, "series" + series.toString());
