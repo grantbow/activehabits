@@ -343,7 +343,7 @@ public class mark extends Activity implements OnClickListener, RadioGroup.OnChec
     		if (gpxfile.exists()) // append
                 w = new FileWriter(gpxfile, true);
     	    else // doesn't exist so overwrite a new file
-                // this fixes the first click new user crash bug
+                // this fixed the first click new user crash bug
                 w = new FileWriter(gpxfile, false);
             // wrap in a buffer
             writer = new BufferedWriter(w);
@@ -367,32 +367,47 @@ public class mark extends Activity implements OnClickListener, RadioGroup.OnChec
 //            if (lastchars[9] != 10) { // check for an ASCII ESC
 //                writer.append("\n");
 //            }
+        	
             // write data
-            if (b < 10) { // pads hours if <10
+        	
+            // #action_name \t
+        	//  epoch_seconds \t
+        	//  hour_of_day \t
+        	//  user_input \t
+        	//  interval_hours \t
+        	//  readable_date \t
+        	//  location
+            
+        	if (b < 10) { // pads hours if <10
                  Log.i(TAG, "mark write: "
                         + buttonText + "\t"
                         + presentTime + "\t"
-                        + "\t" // future user's text entry
                         + x.getHours() + ".0" + b + "\t"
-                        + x.toLocaleString() + "\t" + locString);
+                        + "\t" // future user's text entry
+                        + "\t" // space for calculated interval hours
+                        + x.toLocaleString() + "\t"
+                        + locString);
     		    writer.append( buttonText + "\t"
                         + presentTime + "\t"
-                        + "\t" // future user's text entry
                         + x.getHours() + ".0" + b + "\t"
+                        + "\t" // future user's text entry
+                        + "\t" // space for calculated interval hours
                         + x.toLocaleString() + "\t"
                         + locString + "\n");
     		} else { // doesn't pad hours
     			Log.i(TAG, "mark write: "
                         + buttonText + "\t"
                         + presentTime + "\t"
-                        + "\t" // future user's text entry
                         + x.getHours() + "." + b + "\t"
+                        + "\t" // future user's text entry
+                        + "\t" // space for calculated interval hours
                         + x.toLocaleString() + "\t"
                         + locString);
     		    writer.append( buttonText + "\t"
                         + presentTime + "\t"
-                        + "\t" // future user's text entry
                         + x.getHours() + "." + b + "\t"
+                        + "\t" // future user's text entry
+                        + "\t" // space for calculated interval hours
                         + x.toLocaleString() + "\t"
                         + locString + "\n");
     		}

@@ -79,9 +79,9 @@ public class chart extends Activity {
         Integer l = 0; // lines of data, zero based
         ArrayList<String> eventName = new ArrayList<String>();
         ArrayList<String> eventSec = new ArrayList<String>();
-        ArrayList<String> eventInput = new ArrayList<String>();
         ArrayList<String> eventHour = new ArrayList<String>();
-        ArrayList<String> eventLoc = new ArrayList<String>();
+        ArrayList<String> eventInput = new ArrayList<String>();
+        //ArrayList<String> eventInterval = new ArrayList<String>();
         // assume data on SDcard exists and is good
         // assume no blank lines within data, x.length() > 0
         // assume no actions with line breaks in them
@@ -95,11 +95,22 @@ public class chart extends Activity {
             String[] temp = new String[10];
             String x = buf.readLine();
             while ( x.length() > 0 ) {
-                Log.i(TAG, "buf.readline() " + x); // USEFUL
+                //Log.i(TAG, "buf.readline() " + x); // USEFUL
                 if ( ! x.startsWith("#") ) { // if not a comment
                     //Log.i(TAG, "chart read: " + x);
-                    temp = x.split("[\t]", 5); // Max 5 strings split on tabs, perfect, sample line follows
-                    // wake up	1294599870	input	11.06	Jan 9, 2011 11:04:30 AM	Location[mProvider=network,mTime=1294577632909,mLatitude=37.855569833333334,mLongitude=-122.1274694,mHasAltitude=false,mAltitude=0.0,mHasSpeed=false,mSpeed=0.0,mHasBearing=false,mBearing=0.0,mHasAccuracy=true,mAccuracy=130.0,mExtras=Bundle[mParcelledData.dataSize=148]]
+                    temp = x.split("[\t]", 7); // Max 7 strings split on tabs, perfect
+
+                    // #action_name \t
+                	//  epoch_seconds \t
+                	//  hour_of_day \t
+                	//  user_input \t
+                	//  interval_hours \t
+                	//  readable_date \t
+                	//  location
+                    
+                    // sample line
+                    // wake up	1294599870	11.06	input	5.0	Jan 9, 2011 11:04:30 AM	Location[mProvider=network,mTime=1294577632909,mLatitude=37.855569833333334,mLongitude=-122.1274694,mHasAltitude=false,mAltitude=0.0,mHasSpeed=false,mSpeed=0.0,mHasBearing=false,mBearing=0.0,mHasAccuracy=true,mAccuracy=130.0,mExtras=Bundle[mParcelledData.dataSize=148]]
+                    
                     //Log.i(TAG, "eventName " + temp[0]);
                     eventName.add(temp[0]);
                     //if (eventSec.get(-1) < temp[1])
@@ -108,11 +119,9 @@ public class chart extends Activity {
                     // Log.i(TAG, "*BAD* eventSec " + temp[1]);
                     eventSec.add(temp[1]);
                     //Log.i(TAG, "eventHour " + temp[2]);
-                    eventInput.add(temp[2]);
+                    eventHour.add(temp[2]);
                     //Log.i(TAG, "eventInput " + temp[3]);
-                    eventHour.add(temp[3]);
-                    //Log.i(TAG, "eventMore " + temp[4]);
-                    eventLoc.add(temp[4]);
+                    eventInput.add(temp[3]);
                     l += 1; // only count lines of data
                 }
                 x = buf.readLine(); // next line
@@ -136,7 +145,7 @@ public class chart extends Activity {
         for (int k = 0; k < l; k++) {
             if ( ! eventList.contains(eventName.get(k)) ) {
                 eventList.add(eventName.get(k));
-                Log.i(TAG, "eventList add " + eventName.get(k));
+                //Log.i(TAG, "eventList add " + eventName.get(k));
             }
         }
 
@@ -150,7 +159,11 @@ public class chart extends Activity {
             for (int k = 0; k < l; k++) {
                 if (doit.equals(eventName.get(k))) {
                     //Log.i(TAG, "plot point in " + doit);
-                    //Log.i(TAG, "plot point at " + eventSec.get(k) + " hour " + eventInput.get(k));
+                    //Log.i(TAG, "plot point at " + eventSec.get(k) + " hour " + eventHour.get(k) + " input " + eventInput.get(k));
+                	if (eventHour.get(k).isEmpty()) {
+                		//Log.i(TAG, " SWITCHED");
+                		eventHour.set(k, eventInput.get(k)); // bug fix for file data in wrong column order
+                	}
                     try {
                     	/* charting negative hour values so time flows downward */
                         series.add(new Date(Long.parseLong(eventSec.get(k))*1000), - Double.parseDouble(eventHour.get(k)));
