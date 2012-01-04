@@ -260,10 +260,14 @@ public class mark extends Activity implements OnClickListener, RadioGroup.OnChec
         case R.id.optionchart:
         	Intent myChartIntent = new Intent(this,chart.class);
         	startActivity(myChartIntent);
-        	finish();
+        	// finish(); // issue #47
             return true;
 //      case R.id.social:
 //          return true;
+        case R.id.optionprefs:
+            Intent myPrefsIntent = new Intent(this,prefs.class);
+            startActivity(myPrefsIntent);
+            return true;
         case R.id.optionhelp:
             Intent myHelpIntent = new Intent(this,help.class);
             startActivity(myHelpIntent);

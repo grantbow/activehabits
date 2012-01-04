@@ -4,7 +4,7 @@
     <item type="id" name="button_cancel" />
 <!--<item type="id" name="button_ok" /> -->
     <item type="id" name="dialog_rename" />
-    <item type="id" name="prefs" />
+    <item type="id" name="optionprefs" />
     <item type="id" name="help" />
     <item type="id" name="optionaddaction" />
     <item type="id" name="contextremoveaction" />

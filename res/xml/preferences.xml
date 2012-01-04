@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-<!--     <PreferenceCategory
-                android:title="@string/actionname"> -->
+<!--          <PreferenceCategory
+                android:title="@string/app_name"> -->
                 <EditTextPreference
-                        android:title="@string/markaction"
-                        android:defaultValue="@string/markaction"
-                        android:summary="@string/clicktochange"
-                        android:key="action0" />
+                        android:title="@string/log_event_label"
+                        android:defaultValue="@string/log_event_filename"
+                        android:summary="@string/log_event_summary"
+                        android:key="filename" />
 <!--                <CheckBoxPreference
                         android:title="Checkbox Preference"
                         android:defaultValue="false"
                         android:summary="This preference can be true or false"
                         android:key="checkboxPref" /> -->
-<!--     </PreferenceCategory>  -->
+<!--         </PreferenceCategory> -->
 </PreferenceScreen>

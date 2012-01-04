@@ -11,9 +11,9 @@
 <!--<item android:id="@+id/optionsetmenu"
           android:title="@string/setmenu" />
     <item android:id="@+id/social"
-          android:title="@string/social" />
-    <item android:id="@+id/prefs"
-          android:title="@string/prefs" /> -->
+          android:title="@string/social" /> -->
+    <item android:id="@+id/optionprefs"
+          android:title="@string/prefs" />
     <item android:id="@+id/optionhelp"
           android:title="@string/help"
           android:icon="@drawable/ic_settings_help" />

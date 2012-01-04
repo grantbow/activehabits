@@ -2,7 +2,9 @@
 <resources>
     <string name="markaction">To name this action\nlong press this button.</string>
     <string name="clicktochange">Click to change action name</string>
+    <string name="log_event_label">Filename</string>
     <string name="log_event_filename">activehabits.txt</string>
+    <string name="log_event_summary">filename to store marked actions</string>
     <string name="app_name">ActiveHabits</string>
     <string name="mark">Mark</string>
     <string name="chart">Chart All</string>
