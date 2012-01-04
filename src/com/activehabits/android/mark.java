@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
@@ -79,8 +80,33 @@ public class mark extends Activity implements OnClickListener, RadioGroup.OnChec
     protected static int radioSet = 0; // radio selection of set 
     private View contextMenuItem; // button long pressed for context menu
     private View textEntryView;   // TextEntry for renaming
-    private ActiveHabitsName ahn;
+    private ActiveHabitsName ahn; // extends SQLiteOpenHelper
     private String sSetName;
+    
+    @SuppressWarnings("serial")
+	public class ButtonObj implements Serializable {
+    	//private static final long serialVersionUID = 123456;
+    	public String bTag = "";         // ID               // i.e. action0
+    	public String bValue = "";       // #action_name \t  // i.e. healthy_choice
+    	public String bEpochSecNow = ""; // epoch_seconds \t // i.e. 1325036984
+    	public String bInput = "";       // user_input \t    // i.e. xyz
+    	public String bHourOfDay = "";   // hour_of_day \t   // i.e. 17.81
+    	public String bLoc = "";         // GPS location     // i.e. 
+    	public String bPlaylist = "";    // playlist
+    	public String bPointStyle = "";  // chart symbol
+    	public String bLineWidth = "";   // chart line
+    	public String bColor = "";       // color
+    	public String bTransparency = "";
+    	public String bTextSize = "";    // font size        // i.e. 24
+    	public String bTextBgColor = ""; // future use
+    	public String bTextColor = "";   // white text       // i.e. 0xFFFFFFFF
+    	public String bCounter = "";     // NO UI!
+    	public String bEpochSecPrev = "";// NO ui but less important state to manage
+    	public String bSound = "";       // future use
+    	public String bActionGroup = ""; // future use
+    	public String bImage = "";       // future use
+    	public String bAnimation = "";   // future use
+    }
 
     /** Called when the activity is first created. */
     @Override

@@ -89,7 +89,7 @@ public class chart extends Activity {
         try {
             final File root = Environment.getExternalStorageDirectory();
             final Resources res = getResources();
-            final String sFileName = res.getString(R.string.log_event_filename);
+            final String sFileName = res.getString(R.string.log_event_filename); // = "activehabits.txt";
             final File gpxfile = new File(root,sFileName);
             BufferedReader buf = new BufferedReader(new FileReader(gpxfile)); // appends
             String[] temp = new String[10];
